@@ -4,6 +4,7 @@ import '../../Component/Cleaner/profile_view.dart';
 import '../../Component/Cleaner/today_inspections_view.dart';
 import '../../Controller/Cleaner/profile_controller.dart';
 import '../../Controller/Cleaner/today_inspections_controller.dart';
+import '../../utils/exit.dart';
 import 'cleaner_bottom_nevigation.dart';
 
 class CleanerDashboardView extends StatefulWidget {
@@ -23,27 +24,29 @@ class _CleanerDashboardViewState extends State<CleanerDashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Main content
-          _pages[_currentIndex],
-
-          // Floating bottom navigation
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: CleanerBottomNavigation(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
+    return DoubleBackToExit(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Main content
+            _pages[_currentIndex],
+      
+            // Floating bottom navigation
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: CleanerBottomNavigation(
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
