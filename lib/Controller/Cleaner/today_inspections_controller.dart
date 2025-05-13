@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../Model/inspection_model.dart';
+import '../../Model/Cleaner/inspection_model.dart';
 
 class TodayInspectionsController extends GetxController {
   // Reactive list of inspections

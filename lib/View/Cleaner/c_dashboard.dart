@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Component/Cleaner/profile_view.dart';
 import '../../Component/Cleaner/today_inspections_view.dart';
+import '../../Controller/Cleaner/profile_controller.dart';
 import '../../Controller/Cleaner/today_inspections_controller.dart';
 import 'cleaner_bottom_nevigation.dart';
 
@@ -67,17 +69,11 @@ class CleanerProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ProfileController controller = Get.put(ProfileController());
+
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        backgroundColor: Colors.blue,
-      ),
-      body: const Center(
-        child: Text(
-          'Cleaner Profile Screen',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+      body:ProfileView(),
     );
   }
 }

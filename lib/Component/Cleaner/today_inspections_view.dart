@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:solar_app/Route%20Manager/app_routes.dart';
 import '../../Controller/Cleaner/today_inspections_controller.dart';
-import '../../Model/inspection_model.dart';
+import '../../Model/Cleaner/inspection_model.dart';
 
 class TodayInspectionsView extends GetView<TodayInspectionsController> {
   const TodayInspectionsView({Key? key}) : super(key: key);
@@ -231,7 +232,7 @@ class TodayInspectionsView extends GetView<TodayInspectionsController> {
               child: IconButton(
                 icon: Icon(Icons.chevron_right, color: Colors.red, size: 24.sp), // Use contrasting icon color
                 onPressed: () {
-                  Get.snackbar('Details', inspection.plantName);
+                  Get.toNamed(AppRoutes.cleanerView, arguments: {'taskId': 'yourTaskId'});
                 },
               ),
             )
