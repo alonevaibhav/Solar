@@ -22,7 +22,7 @@ class TodayInspectionsController extends GetxController {
   final RxString currentTaskId = ''.obs;
   final RxBool isTaskDetailView = false.obs;
   final RxString taskStatus = 'pending'.obs;
-  final RxInt remainingMinutes = 32.obs;
+  final RxInt remainingMinutes = 100.obs;
 
   // Timer for ongoing tasks
   Timer? _timer;
@@ -157,8 +157,7 @@ class TodayInspectionsController extends GetxController {
     if (pendingResult != null) return pendingResult;
 
     // Check in completed inspections
-    return completedInspections
-        .firstWhereOrNull((inspection) => inspection.id == currentTaskId.value);
+    return completedInspections.firstWhereOrNull((inspection) => inspection.id == currentTaskId.value);
   }
 
   // Task actions
@@ -229,7 +228,7 @@ class TodayInspectionsController extends GetxController {
   // Start a timer for ongoing tasks
   void _startTimer() {
     _timer?.cancel();
-    remainingMinutes.value = 32; // Reset timer
+    remainingMinutes.value = 100; // Reset timer
 
     _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
       if (remainingMinutes.value > 0) {
