@@ -104,11 +104,12 @@ class TodayInspectionsView extends GetView<TodayInspectionsController> {
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                     decoration: BoxDecoration(
                       color: controller.selectedSegment.value == 0
-                          ? Colors.red
-                          : Colors.red.withOpacity(0.3),
+                          ?  Colors.red
+                          : const Color(0xFFFF6B6B),
+
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10.r),
-                        bottomLeft: Radius.circular(30.r),
+                        bottomLeft: Radius.circular(10.r),
                       ),
                       boxShadow: controller.selectedSegment.value == 0
                           ? [
@@ -142,10 +143,10 @@ class TodayInspectionsView extends GetView<TodayInspectionsController> {
                     decoration: BoxDecoration(
                       color: controller.selectedSegment.value == 1
                           ? Colors.green
-                          : Colors.green.withOpacity(0.3),
+                          : Colors.green.withOpacity(0.7),
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10.r),
-                        bottomRight: Radius.circular(30.r),
+                        bottomRight: Radius.circular(10.r),
                       ),
                       boxShadow: controller.selectedSegment.value == 1
                           ? [
@@ -180,7 +181,7 @@ class TodayInspectionsView extends GetView<TodayInspectionsController> {
     final isCompleted = inspection.isCompleted;
     return Container(
       decoration: BoxDecoration(
-        color: isCompleted ? Colors.green : Colors.red,
+        color: isCompleted ? Colors.green : Color(0xFFFF6B6B),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Padding(

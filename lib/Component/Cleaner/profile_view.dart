@@ -48,12 +48,27 @@ class ProfileView extends GetView<ProfileController> {
               onTap: controller.goToCleanupHistory,
             ),
 
+            // SizedBox(height: 14.4.h),
+            //
+            // Padding(
+            //   padding: EdgeInsets.only(left: 14.4.w, bottom: 7.2.h),
+            //   child: Text(
+            //     'Preference',
+            //     style: TextStyle(
+            //       fontSize: 12.6.sp,
+            //       fontWeight: FontWeight.w500,
+            //       color: Colors.black87,
+            //     ),
+            //   ),
+            // ),
+
+            // _buildThemeToggle(),
             SizedBox(height: 14.4.h),
 
             Padding(
               padding: EdgeInsets.only(left: 14.4.w, bottom: 7.2.h),
               child: Text(
-                'Preference',
+                'Account ',
                 style: TextStyle(
                   fontSize: 12.6.sp,
                   fontWeight: FontWeight.w500,
@@ -61,8 +76,6 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               ),
             ),
-
-            _buildThemeToggle(),
 
             _buildActionButton(
               icon: Icons.logout,
@@ -252,55 +265,55 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildThemeToggle() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 14.4.w, vertical: 3.6.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.8.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 4.5,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 14.4.w, vertical: 10.8.h),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(7.2.w),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.dark_mode,
-                size: 18.sp,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(width: 14.4.w),
-            Text(
-              'Toggle Theme',
-              style: TextStyle(
-                fontSize: 14.4.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const Spacer(),
-            Obx(() => Switch(
-              value: controller.isDarkMode.value,
-              onChanged: controller.toggleTheme,
-              activeColor: Colors.blue,
-            )),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildThemeToggle() {
+  //   return Container(
+  //     margin: EdgeInsets.symmetric(horizontal: 14.4.w, vertical: 3.6.h),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(10.8.r),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: Colors.black.withOpacity(0.03),
+  //           blurRadius: 4.5,
+  //           offset: const Offset(0, 1),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 14.4.w, vertical: 10.8.h),
+  //       child: Row(
+  //         children: [
+  //           Container(
+  //             padding: EdgeInsets.all(7.2.w),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey.shade100,
+  //               shape: BoxShape.circle,
+  //             ),
+  //             child: Icon(
+  //               Icons.dark_mode,
+  //               size: 18.sp,
+  //               color: Colors.black87,
+  //             ),
+  //           ),
+  //           SizedBox(width: 14.4.w),
+  //           Text(
+  //             'Toggle Theme',
+  //             style: TextStyle(
+  //               fontSize: 14.4.sp,
+  //               fontWeight: FontWeight.w500,
+  //             ),
+  //           ),
+  //           const Spacer(),
+  //           Obx(() => Switch(
+  //             value: controller.isDarkMode.value,
+  //             onChanged: controller.toggleTheme,
+  //             activeColor: Colors.blue,
+  //           )),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildActionButton({
     required IconData icon,

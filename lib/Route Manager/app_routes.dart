@@ -45,11 +45,6 @@ class AppRoutes {
       page: () => const TaskDetailView(),
       binding: AppBindings(),
     ),
-    // GetPage(
-    //   name: cleanerView,
-    //   page: () => const CleanerDashboardView(),
-    //   binding: AppBindings(),
-    // ),
     GetPage(
       name: cleanerUpdateProfile,
       page: () =>  UpdateProfileView(),
