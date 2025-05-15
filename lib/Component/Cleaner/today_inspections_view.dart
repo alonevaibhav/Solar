@@ -229,12 +229,19 @@ class TodayInspectionsView extends GetView<TodayInspectionsController> {
                 color: Colors.white, // Fill color
                 shape: BoxShape.circle, // Circular shape
               ),
-              child: IconButton(
-                icon: Icon(Icons.chevron_right, color: Colors.red, size: 24.sp), // Use contrasting icon color
+              child:// In _buildInspectionCard() method of TodayInspectionsView
+              IconButton(
+                icon: Icon(Icons.chevron_right, color: Colors.red, size: 24.sp),
                 onPressed: () {
-                  Get.toNamed(AppRoutes.cleanerView, arguments: {'taskId': 'yourTaskId'});
+                  Get.toNamed(
+                      AppRoutes.cleanerTaskDetailView,
+                      arguments: {
+                        'taskId': inspection.id,
+                        'status': inspection.isCompleted ? 'completed' : 'pending'
+                      }
+                  );
                 },
-              ),
+              )
             )
 
           ],
