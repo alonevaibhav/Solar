@@ -1,8 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/Controller/Inspector/plant_managment_controller.dart';
+
+import '../../utils/dialog_box.dart';
 
 class AutoCleanSchedule extends StatelessWidget {
   final Map<String, dynamic> plant;
@@ -45,7 +46,8 @@ class AutoCleanSchedule extends StatelessWidget {
                 Row(
                   children: [
                     Icon(Icons.schedule,
-                        size: (24 * 0.8).sp, color: Colors.black.withOpacity(0.7)),
+                        size: (24 * 0.8).sp,
+                        color: Colors.black.withOpacity(0.7)),
                     SizedBox(width: (8 * 0.8).w),
                     Text(
                       'Auto Clean Schedules',
@@ -104,7 +106,8 @@ class AutoCleanSchedule extends StatelessWidget {
   Widget _buildUpdatedScheduleItem(
       Map<String, dynamic> schedule, String plantId) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: (16 * 0.8).w, vertical: (8 * 0.8).h),
+      margin:
+          EdgeInsets.symmetric(horizontal: (16 * 0.8).w, vertical: (8 * 0.8).h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular((12 * 0.8).r),
       ),
@@ -112,8 +115,7 @@ class AutoCleanSchedule extends StatelessWidget {
         children: [
           // Delete button (always visible in red container)
           GestureDetector(
-            onTap: () =>
-                controller.markScheduleForDeletion(plantId, schedule['id']),
+            onTap: () => _showDeleteConfirmationDialog(plantId, schedule['id']),
             child: Container(
               width: (60 * 0.8).w,
               height: (80 * 0.8).h,
@@ -136,7 +138,8 @@ class AutoCleanSchedule extends StatelessWidget {
           Expanded(
             child: Container(
               height: (80 * 0.8).h,
-              padding: EdgeInsets.symmetric(horizontal: (20 * 0.8).w, vertical: (16 * 0.8).h),
+              padding: EdgeInsets.symmetric(
+                  horizontal: (20 * 0.8).w, vertical: (16 * 0.8).h),
               decoration: BoxDecoration(
                 color: const Color(0xFFB4ECC4), // Light green for all items
                 borderRadius: BorderRadius.only(
@@ -213,7 +216,8 @@ class AutoCleanSchedule extends StatelessWidget {
 
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((16 * 0.8).r)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular((16 * 0.8).r)),
         child: Container(
           padding: EdgeInsets.all((20 * 0.8).w),
           width: (350 * 0.8).w,
@@ -260,22 +264,22 @@ class AutoCleanSchedule extends StatelessWidget {
                   border: Border.all(color: Colors.grey[300]!),
                 ),
                 child: Obx(() => DropdownButton<String>(
-                  value: controller.selectedDay.value,
-                  isExpanded: true,
-                  underline: Container(),
-                  icon: Icon(Icons.arrow_drop_down, size: (24 * 0.8).sp),
-                  items: days.map((String day) {
-                    return DropdownMenuItem<String>(
-                      value: day,
-                      child: Text(day),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      controller.setSelectedDay(value);
-                    }
-                  },
-                )),
+                      value: controller.selectedDay.value,
+                      isExpanded: true,
+                      underline: Container(),
+                      icon: Icon(Icons.arrow_drop_down, size: (24 * 0.8).sp),
+                      items: days.map((String day) {
+                        return DropdownMenuItem<String>(
+                          value: day,
+                          child: Text(day),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.setSelectedDay(value);
+                        }
+                      },
+                    )),
               ),
 
               SizedBox(height: (20 * 0.8).h),
@@ -292,96 +296,98 @@ class AutoCleanSchedule extends StatelessWidget {
               SizedBox(height: (10 * 0.8).h),
 
               Obx(() => Row(
-                children: [
-                  // Hour picker
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular((8 * 0.8).r),
-                        border: Border.all(color: Colors.grey[300]!),
+                    children: [
+                      // Hour picker
+                      Expanded(
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular((8 * 0.8).r),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: DropdownButton<int>(
+                            value: controller.hour.value,
+                            isExpanded: true,
+                            underline: Container(),
+                            items: List.generate(12, (index) => index + 1)
+                                .map((int h) {
+                              return DropdownMenuItem<int>(
+                                value: h,
+                                child: Text(h.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setHour(value);
+                              }
+                            },
+                          ),
+                        ),
                       ),
-                      child: DropdownButton<int>(
-                        value: controller.hour.value,
-                        isExpanded: true,
-                        underline: Container(),
-                        items: List.generate(12, (index) => index + 1)
-                            .map((int h) {
-                          return DropdownMenuItem<int>(
-                            value: h,
-                            child: Text(h.toString()),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.setHour(value);
-                          }
-                        },
+
+                      SizedBox(width: (10 * 0.8).w),
+                      Text(':', style: TextStyle(fontSize: (16 * 0.8).sp)),
+                      SizedBox(width: (10 * 0.8).w),
+
+                      // Minute picker
+                      Expanded(
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular((8 * 0.8).r),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: DropdownButton<int>(
+                            value: controller.minute.value,
+                            isExpanded: true,
+                            underline: Container(),
+                            items: [0, 15, 30, 45].map((int m) {
+                              return DropdownMenuItem<int>(
+                                value: m,
+                                child: Text(m.toString().padLeft(2, '0')),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setMinute(value);
+                              }
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
 
-                  SizedBox(width: (10 * 0.8).w),
-                  Text(':', style: TextStyle(fontSize: (16 * 0.8).sp)),
-                  SizedBox(width: (10 * 0.8).w),
+                      SizedBox(width: (10 * 0.8).w),
 
-                  // Minute picker
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular((8 * 0.8).r),
-                        border: Border.all(color: Colors.grey[300]!),
+                      // AM/PM picker
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular((8 * 0.8).r),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: DropdownButton<String>(
+                          value: controller.amPm.value,
+                          underline: Container(),
+                          items: ['AM', 'PM'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              controller.setAmPm(value);
+                            }
+                          },
+                        ),
                       ),
-                      child: DropdownButton<int>(
-                        value: controller.minute.value,
-                        isExpanded: true,
-                        underline: Container(),
-                        items: [0, 15, 30, 45].map((int m) {
-                          return DropdownMenuItem<int>(
-                            value: m,
-                            child: Text(m.toString().padLeft(2, '0')),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.setMinute(value);
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: (10 * 0.8).w),
-
-                  // AM/PM picker
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular((8 * 0.8).r),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: DropdownButton<String>(
-                      value: controller.amPm.value,
-                      underline: Container(),
-                      items: ['AM', 'PM'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.setAmPm(value);
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              )),
+                    ],
+                  )),
 
               SizedBox(height: (30 * 0.8).h),
 
@@ -413,7 +419,10 @@ class AutoCleanSchedule extends StatelessWidget {
 
                       // Add schedule
                       controller.addCleaningSchedule(
-                          plantId, controller.selectedDay.value, time, controller.amPm.value);
+                          plantId,
+                          controller.selectedDay.value,
+                          time,
+                          controller.amPm.value);
                       Get.back();
                     },
                     style: ElevatedButton.styleFrom(
@@ -473,7 +482,8 @@ class AutoCleanSchedule extends StatelessWidget {
 
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular((16 * 0.8).r)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular((16 * 0.8).r)),
         child: Container(
           padding: EdgeInsets.all((20 * 0.8).w),
           width: (350 * 0.8).w,
@@ -520,22 +530,22 @@ class AutoCleanSchedule extends StatelessWidget {
                   border: Border.all(color: Colors.grey[300]!),
                 ),
                 child: Obx(() => DropdownButton<String>(
-                  value: controller.selectedDay.value,
-                  isExpanded: true,
-                  underline: Container(),
-                  icon: Icon(Icons.arrow_drop_down, size: (24 * 0.8).sp),
-                  items: days.map((String day) {
-                    return DropdownMenuItem<String>(
-                      value: day,
-                      child: Text(day),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      controller.setSelectedDay(value);
-                    }
-                  },
-                )),
+                      value: controller.selectedDay.value,
+                      isExpanded: true,
+                      underline: Container(),
+                      icon: Icon(Icons.arrow_drop_down, size: (24 * 0.8).sp),
+                      items: days.map((String day) {
+                        return DropdownMenuItem<String>(
+                          value: day,
+                          child: Text(day),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          controller.setSelectedDay(value);
+                        }
+                      },
+                    )),
               ),
 
               SizedBox(height: (20 * 0.8).h),
@@ -552,96 +562,98 @@ class AutoCleanSchedule extends StatelessWidget {
               SizedBox(height: (10 * 0.8).h),
 
               Obx(() => Row(
-                children: [
-                  // Hour picker
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular((8 * 0.8).r),
-                        border: Border.all(color: Colors.grey[300]!),
+                    children: [
+                      // Hour picker
+                      Expanded(
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular((8 * 0.8).r),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: DropdownButton<int>(
+                            value: controller.hour.value,
+                            isExpanded: true,
+                            underline: Container(),
+                            items: List.generate(12, (index) => index + 1)
+                                .map((int h) {
+                              return DropdownMenuItem<int>(
+                                value: h,
+                                child: Text(h.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setHour(value);
+                              }
+                            },
+                          ),
+                        ),
                       ),
-                      child: DropdownButton<int>(
-                        value: controller.hour.value,
-                        isExpanded: true,
-                        underline: Container(),
-                        items: List.generate(12, (index) => index + 1)
-                            .map((int h) {
-                          return DropdownMenuItem<int>(
-                            value: h,
-                            child: Text(h.toString()),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.setHour(value);
-                          }
-                        },
+
+                      SizedBox(width: (10 * 0.8).w),
+                      Text(':', style: TextStyle(fontSize: (16 * 0.8).sp)),
+                      SizedBox(width: (10 * 0.8).w),
+
+                      // Minute picker
+                      Expanded(
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular((8 * 0.8).r),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: DropdownButton<int>(
+                            value: controller.minute.value,
+                            isExpanded: true,
+                            underline: Container(),
+                            items: [0, 15, 30, 45].map((int m) {
+                              return DropdownMenuItem<int>(
+                                value: m,
+                                child: Text(m.toString().padLeft(2, '0')),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                controller.setMinute(value);
+                              }
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
 
-                  SizedBox(width: (10 * 0.8).w),
-                  Text(':', style: TextStyle(fontSize: (16 * 0.8).sp)),
-                  SizedBox(width: (10 * 0.8).w),
+                      SizedBox(width: (10 * 0.8).w),
 
-                  // Minute picker
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular((8 * 0.8).r),
-                        border: Border.all(color: Colors.grey[300]!),
+                      // AM/PM picker
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular((8 * 0.8).r),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: DropdownButton<String>(
+                          value: controller.amPm.value,
+                          underline: Container(),
+                          items: ['AM', 'PM'].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              controller.setAmPm(value);
+                            }
+                          },
+                        ),
                       ),
-                      child: DropdownButton<int>(
-                        value: controller.minute.value,
-                        isExpanded: true,
-                        underline: Container(),
-                        items: [0, 15, 30, 45].map((int m) {
-                          return DropdownMenuItem<int>(
-                            value: m,
-                            child: Text(m.toString().padLeft(2, '0')),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.setMinute(value);
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: (10 * 0.8).w),
-
-                  // AM/PM picker
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: (12 * 0.8).w),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular((8 * 0.8).r),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: DropdownButton<String>(
-                      value: controller.amPm.value,
-                      underline: Container(),
-                      items: ['AM', 'PM'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.setAmPm(value);
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              )),
+                    ],
+                  )),
 
               SizedBox(height: (30 * 0.8).h),
 
@@ -673,7 +685,11 @@ class AutoCleanSchedule extends StatelessWidget {
 
                       // Update schedule
                       controller.editCleaningSchedule(
-                          plantId, scheduleId, controller.selectedDay.value, updatedTime, controller.amPm.value);
+                          plantId,
+                          scheduleId,
+                          controller.selectedDay.value,
+                          updatedTime,
+                          controller.amPm.value);
                       Get.back();
                     },
                     style: ElevatedButton.styleFrom(
@@ -701,4 +717,18 @@ class AutoCleanSchedule extends StatelessWidget {
       ),
     );
   }
+
+  // Function to show the delete confirmation dialog
+  void _showDeleteConfirmationDialog(String plantId, String scheduleId) {
+    Get.dialog(
+      ConfirmationDialog(
+        title: 'Confirm Deletion',
+        content: 'Are you sure you want to delete this schedule?',
+        onConfirm: () {
+          controller.markScheduleForDeletion(plantId, scheduleId);
+        },
+      ),
+    );
+  }
 }
+

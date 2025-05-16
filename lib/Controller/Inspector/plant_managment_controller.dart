@@ -385,15 +385,14 @@ class PlantManagementController extends GetxController {
   }
 
   // Delete a cleaning schedule
-  Future<void> markScheduleForDeletion(
-      String plantId, String scheduleId) async {
+  Future<void> markScheduleForDeletion(String plantId, String scheduleId) async {
     try {
       isLoading.value = true;
 
       // Mock API call
       await Future.delayed(Duration(seconds: 1));
 
-      // Find plant and mark schedule for deletion
+      // Find plant and delete the schedule
       final plantIndex = plants.indexWhere((plant) => plant['id'] == plantId);
       if (plantIndex == -1) throw Exception('Plant not found');
 
@@ -405,26 +404,27 @@ class PlantManagementController extends GetxController {
       schedules.indexWhere((schedule) => schedule['id'] == scheduleId);
       if (scheduleIndex == -1) throw Exception('Schedule not found');
 
-      schedules[scheduleIndex] = {
-        ...schedules[scheduleIndex],
-        'isMarkedForDeletion': true,
-      };
+      // Remove the schedule from the list
+      schedules.removeAt(scheduleIndex);
 
+      // Update the plant's schedules
       plant['schedules'] = schedules;
       plants[plantIndex] = plant;
 
+      // Update the selected plant if it's the one being modified
       if (selectedPlant.value?['id'] == plantId) {
         selectedPlant.value = plant;
       }
 
-      Get.snackbar('Success', 'Cleaning schedule marked for deletion');
+      Get.snackbar('Success', 'Cleaning schedule deleted successfully');
     } catch (e) {
       errorMessage.value = e.toString();
-      Get.snackbar('Error', 'Failed to mark schedule for deletion');
+      Get.snackbar('Error', 'Failed to delete schedule');
     } finally {
       isLoading.value = false;
     }
   }
+
 
   // Update alert level
   void updateAlertLevel(String level) {
