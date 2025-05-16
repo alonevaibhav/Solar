@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/Route%20Manager/app_routes.dart';
 
-class ProfileController extends GetxController {
+class IUserProfile extends GetxController {
   // User information
   final RxString userName = 'Ravi Sharma'.obs;
   final RxString userPhone = '9876543210'.obs;
@@ -56,7 +56,7 @@ class ProfileController extends GetxController {
 
   // Navigate to assigned plants screen
   void goToAssignedPlants() {
-    Get.toNamed(AppRoutes.cleanerAssignPlant);
+    Get.toNamed(AppRoutes.inspectorAssignedPlants);
   }
 
   // Navigate to help and support screen

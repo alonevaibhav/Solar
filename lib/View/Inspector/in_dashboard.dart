@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:solar_app/View/Inspector/user_profile.dart';
 
+import '../../Controller/user_profile_controller.dart';
+import '../../utils/exit.dart';
 import 'bottom_nevigation.dart';
 
 class InDashboard extends StatefulWidget {
@@ -23,27 +26,29 @@ class _InDashboardState extends State<InDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Main content
-          _pages[_currentIndex],
+    return DoubleBackToExit(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Main content
+            _pages[_currentIndex],
 
-          // Floating bottom navigation
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: InspectorBottomNavigation(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
+            // Floating bottom navigation
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: InspectorBottomNavigation(
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -55,7 +60,7 @@ class InspectorReportsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Reports'),
         backgroundColor: Colors.blue,
@@ -72,7 +77,7 @@ class InspectorTasksTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Tasks'),
         backgroundColor: Colors.blue,
@@ -89,7 +94,7 @@ class InspectorHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Inspector Dashboard'),
         backgroundColor: Colors.blue,
@@ -106,7 +111,7 @@ class InspectorAlertsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Alerts'),
         backgroundColor: Colors.blue,
@@ -123,14 +128,10 @@ class InspectorProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text('Inspector Profile Screen', style: TextStyle(fontSize: 24)),
-      ),
+    final IUserProfile controller = Get.put(IUserProfile());
+
+    return Scaffold(
+      body: UserProfile(),
     );
   }
 }

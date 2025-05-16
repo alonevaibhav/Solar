@@ -4,9 +4,12 @@ import '../Component/Cleaner/cleanup_history_list.dart';
 import '../Component/Cleaner/help_support_view.dart';
 import '../Component/Cleaner/task_detail_view.dart';
 import '../Component/Cleaner/update_view.dart';
+import '../Component/Inspector/plant_details_view.dart';
 import '../View/Auth/login_page.dart';
 import '../View/Cleaner/c_dashboard.dart';
+import '../View/Inspector/assigned_plant_view.dart';
 import '../View/Inspector/in_dashboard.dart';
+import '../View/Inspector/user_profile.dart';
 import '../View/User/u_dashboard.dart';
 import 'app_bindings.dart';
 
@@ -14,6 +17,9 @@ class AppRoutes {
   // Route names
   static const login = '/login';
   static const user = '/user/home';
+
+  //Cleaner routes
+
   static const cleaner = '/cleaner/dashboard';
   static const cleanerView = '/cleaner/view';
   static const cleanerTaskDetailView = '/cleaner/cleanerTaskDetailView';
@@ -21,7 +27,13 @@ class AppRoutes {
   static const cleanerAssignPlant = '/cleaner/cleanerAssignPlant';
   static const cleanerHelp = '/cleaner/cleanerHelp';
   static const cleanerCleanupHistory = '/cleaner/cleanerCleanupHistory';
+
+  // Inspector routes
+
   static const inspector = '/inspector/dashboard';
+  static const inspectorUserProfileView = '/inspector/UserProfileView';
+  static const inspectorAssignedPlants = '/inspector/inspectorAssignedPlants';
+  static const inspectorPlantDetails = '/inspector/inspectorPlantDetails';
 
   // All of your pages
   static final routes = <GetPage>[
@@ -35,6 +47,8 @@ class AppRoutes {
       page: () => const UDashboard(),
       binding: AppBindings(),
     ),
+
+    //Cleaner routes
     GetPage(
       name: cleaner,
       page: () => const CleanerDashboardView(),
@@ -47,22 +61,45 @@ class AppRoutes {
     ),
     GetPage(
       name: cleanerUpdateProfile,
-      page: () =>  UpdateProfileView(),
+      page: () => UpdateProfileView(),
       binding: AppBindings(),
     ),
     GetPage(
       name: cleanerAssignPlant,
-      page: () =>  AssignedPlantsView(),
+      page: () => AssignedPlantsView(),
       binding: AppBindings(),
     ),
     GetPage(
       name: cleanerHelp,
-      page: () =>  HelpSupportView(),
+      page: () => HelpSupportView(),
       binding: AppBindings(),
     ),
     GetPage(
       name: cleanerCleanupHistory,
-      page: () =>  CleanUpHistoryView(),
+      page: () => CleanUpHistoryView(),
+      binding: AppBindings(),
+    ),
+
+    // Inspector routes
+    GetPage(
+      name: inspector,
+      page: () => InDashboard(),
+      binding: AppBindings(),
+    ),
+
+    GetPage(
+      name: inspectorUserProfileView,
+      page: () => UserProfile(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: inspectorAssignedPlants,
+      page: () => InspectorAssignedPlantsView(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: inspectorPlantDetails,
+      page: () => PlantDetailsView(),
       binding: AppBindings(),
     ),
   ];
