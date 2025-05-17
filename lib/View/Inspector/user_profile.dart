@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../Controller/Cleaner/profile_controller.dart';
-import '../../Controller/user_profile_controller.dart';
+import '../../Controller/Inspector/user_profile_controller.dart';
 
 class UserProfile extends GetView<IUserProfile> {
   const UserProfile({Key? key}) : super(key: key);

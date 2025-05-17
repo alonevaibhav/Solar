@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:solar_app/View/Inspector/plant_inspection_view.dart';
 import 'package:solar_app/View/Inspector/user_profile.dart';
 
-import '../../Controller/user_profile_controller.dart';
+import '../../Controller/Inspector/plant_inspection_controller.dart';
+import '../../Controller/Inspector/user_profile_controller.dart';
 import '../../utils/exit.dart';
 import 'bottom_nevigation.dart';
 
@@ -94,14 +96,10 @@ class InspectorHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final PlantInspectionController controller = Get.put(PlantInspectionController());
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Inspector Dashboard'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text('Inspector Home Screen', style: TextStyle(fontSize: 24)),
-      ),
+      body:PlantInspectionView(),
     );
   }
 }
