@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:solar_app/View/Inspector/plant_inspection_view.dart';
 import 'package:solar_app/View/Inspector/user_profile.dart';
 
+import '../../Controller/Inspector/area_inspection_controller.dart';
 import '../../Controller/Inspector/plant_inspection_controller.dart';
 import '../../Controller/Inspector/user_profile_controller.dart';
 import '../../utils/exit.dart';
+import 'area_inspection_view.dart';
 import 'bottom_nevigation.dart';
 
 class InDashboard extends StatefulWidget {
@@ -62,14 +64,12 @@ class InspectorReportsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final AreaInspectionController controller = Get.put(AreaInspectionController());
+
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Reports'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text('Inspector Reports Screen', style: TextStyle(fontSize: 24)),
-      ),
+      body: AreaInspectionView(),
     );
   }
 }
