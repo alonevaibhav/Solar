@@ -98,8 +98,8 @@ class PlantInspectionDetailView extends StatelessWidget {
                   children: [
                     // Green panel indicator
                     Container(
-                      width: 60.w,
-                      height: 30.h,
+                      width: 70.w,
+                      height: 40.h,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: const Color(0xFFA5D6A7),
@@ -112,14 +112,14 @@ class PlantInspectionDetailView extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
+                          fontSize: 17.sp,
                         ),
                       ),
                     ),
                     // Red panel indicator
                     Container(
-                      width: 60.w,
-                      height: 30.h,
+                      width: 70.w,
+                      height: 40.h,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: Colors.red[300],
@@ -132,31 +132,39 @@ class PlantInspectionDetailView extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
+                          fontSize: 17.sp,
                         ),
                       ),
                     ),
                     SizedBox(width: 16.w),
                     // Total panel count
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Total',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12.sp,
+                    Container(
+                      padding: EdgeInsets.only(left: 16.r, right: 16.r, top: 8.r, bottom: 8.r),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200], // Light grey background
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Total',
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                              fontSize: 12.sp,
+                            ),
                           ),
-                        ),
-                        Text(
-                          '$totalPanels Panels',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14.sp,
+                          Text(
+                            '$totalPanels Panels',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+
                     const Spacer(),
                     // Solar panel icon
                     Container(
@@ -243,33 +251,48 @@ class PlantInspectionDetailView extends StatelessWidget {
                       ),
                       SizedBox(height: 16.h),
                       // Location info
-                      Text(
-                        'Location',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
+                      Container(
+                        padding: EdgeInsets.all(8.r),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200], // Light grey background
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              plantData['location'] ?? 'Unknown Location',
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Location',
                               style: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.grey[600],
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey[700],
                               ),
                             ),
-                          ),
-                          Icon(
-                            Icons.near_me,
-                            color: Colors.blue,
-                            size: 24.r,
-                          ),
-                        ],
-                      ),
+                            SizedBox(height: 4.h),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    plantData['location'] ?? 'Unknown Location',
+                                    style: TextStyle(
+                                      fontSize: 10.sp,
+                                      color: Colors.grey[600],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.near_me,
+                                  color: Colors.blue,
+                                  size: 20.r,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+
                     ],
                   ),
                 ),

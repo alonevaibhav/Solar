@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:solar_app/View/Inspector/plant_inspection_view.dart';
 import 'package:solar_app/View/Inspector/user_profile.dart';
 
+import '../../Component/Inspector/TicketPage/ticket_view.dart';
 import '../../Controller/Inspector/area_inspection_controller.dart';
 import '../../Controller/Inspector/plant_inspection_controller.dart';
+import '../../Controller/Inspector/ticket_controller.dart';
 import '../../Controller/Inspector/user_profile_controller.dart';
 import '../../utils/exit.dart';
 import 'area_inspection_view.dart';
@@ -64,9 +66,8 @@ class InspectorReportsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final AreaInspectionController controller = Get.put(AreaInspectionController());
-
+    final AreaInspectionController controller =
+        Get.put(AreaInspectionController());
 
     return Scaffold(
       body: AreaInspectionView(),
@@ -79,14 +80,11 @@ class InspectorTasksTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final TicketController controller = Get.put(TicketController());
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Tasks'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text('Inspector Tasks Screen', style: TextStyle(fontSize: 24)),
-      ),
+      body: TicketView(),
     );
   }
 }
@@ -96,10 +94,9 @@ class InspectorHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final PlantInspectionController controller = Get.put(PlantInspectionController());
     return Scaffold(
-      body:PlantInspectionView(),
+      body: PlantInspectionView(),
     );
   }
 }

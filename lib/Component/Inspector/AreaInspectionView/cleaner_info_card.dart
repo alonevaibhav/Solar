@@ -11,7 +11,13 @@ class CleanerInfoCard extends StatelessWidget {
     Key? key,
     required this.name,
     required this.phone,
-    this.ratings = const [true, true, true, true, true], // Default 5-star rating
+    this.ratings = const [
+      true,
+      true,
+      true,
+      true,
+      true
+    ], // Default 5-star rating
   }) : super(key: key);
 
   @override
@@ -141,7 +147,7 @@ class CleanerInfoCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               5,
-                  (index) => Icon(
+              (index) => Icon(
                 Icons.star,
                 color: Colors.amber,
                 size: 28.r,

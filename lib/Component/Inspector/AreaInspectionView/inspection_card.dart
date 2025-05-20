@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -5,7 +7,8 @@ import '../../../Controller/Inspector/area_inspection_controller.dart';
 
 class InspectionForm extends StatelessWidget {
   final String plantId;
-  final AreaInspectionController controller = Get.find<AreaInspectionController>();
+  final AreaInspectionController controller =
+      Get.find<AreaInspectionController>();
 
   InspectionForm({
     Key? key,
@@ -22,10 +25,10 @@ class InspectionForm extends StatelessWidget {
           // Cleaning checklist
           ...List.generate(
             controller.cleaningChecklist.length,
-                (index) => Padding(
+            (index) => Padding(
               padding: EdgeInsets.only(bottom: 8.h),
               child: Obx(
-                    () => CheckboxListTile(
+                () => CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     'Cleaning',
@@ -59,35 +62,39 @@ class InspectionForm extends StatelessWidget {
                 border: Border.all(color: Colors.grey[300]!),
               ),
               child: Obx(() {
-                if (controller.uploadedImagePath.value != null) {
-                  // Show uploaded image
+                final imagePath = controller.uploadedImagePath.value;
+                final isUploading = controller.isUploadingImage.value;
+
+                if (isUploading) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (imagePath != null) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(12.r),
-                    child: Image.asset(
-                      controller.uploadedImagePath.value!,
+                    child: Image.file(
+                      File(imagePath),
                       fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
                     ),
                   );
                 }
 
-                // Show upload placeholder
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.cloud_upload_outlined,
-                      size: 40.r,
-                      color: Colors.grey[500],
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'Upload Image',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14.sp,
+                // Placeholder UI
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.cloud_upload, color: Colors.grey, size: 32.r),
+                      SizedBox(height: 8.h),
+                      Text(
+                        'Tap to upload image',
+                        style:
+                            TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               }),
             ),
@@ -169,27 +176,27 @@ class InspectionForm extends StatelessWidget {
             width: double.infinity,
             height: 50.h,
             child: Obx(() => ElevatedButton(
-              onPressed: controller.isLoading.value
-                  ? null
-                  : () => controller.sendRemark(plantId),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                disabledBackgroundColor: Colors.grey,
-              ),
-              child: controller.isLoading.value
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                'Submit',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )),
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () => controller.sendRemark(plantId),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    disabledBackgroundColor: Colors.grey,
+                  ),
+                  child: controller.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                )),
           ),
         ],
       ),

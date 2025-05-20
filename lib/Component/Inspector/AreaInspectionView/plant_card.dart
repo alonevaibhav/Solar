@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:solar_app/Component/Inspector/AreaInspectionView/plant_info_detail_view.dart';
 import '../../../Controller/Inspector/area_inspection_controller.dart';
+import '../../../Route Manager/app_routes.dart';
 
 class PlantCardWidget extends StatelessWidget {
   final Map<String, dynamic> plant;
@@ -84,22 +86,36 @@ class PlantCardWidget extends StatelessWidget {
             size: 18.r,
           ),
         ),
-        Container(
-          width: 32.r,
-          height: 32.r,
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.arrow_outward,
-            size: 18.r,
-            color: Colors.blue,
+        GestureDetector(
+          // onTap: () {
+          //   Get.toNamed(
+          //    AppRoutes.inspectorPlantCard ,
+          //     arguments: {'plantId': plant['id']},
+          //   );
+          // },
+
+          onTap: () {
+            // Navigate to detail screen
+            Get.to(() => PlantInspectionDetailView(plantId: plant['id']));
+          },
+          child: Container(
+            width: 32.r,
+            height: 32.r,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.arrow_outward,
+              size: 18.r,
+              color: Colors.blue,
+            ),
           ),
         ),
       ],
     );
   }
+
 
   Widget _buildPanelsInfo() {
     final status = plant['status'] as String;
