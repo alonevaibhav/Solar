@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:solar_app/View/Inspector/plant_inspection_view.dart';
 import 'package:solar_app/View/Inspector/user_profile.dart';
 
+import '../../Component/Inspector/AlertsView/alerts_view.dart';
 import '../../Component/Inspector/TicketPage/ticket_view.dart';
+import '../../Controller/AlertView/alerts_controller.dart';
 import '../../Controller/Inspector/area_inspection_controller.dart';
 import '../../Controller/Inspector/plant_inspection_controller.dart';
 import '../../Controller/Inspector/ticket_controller.dart';
@@ -106,14 +108,12 @@ class InspectorAlertsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final AlertsController controller = Get.put(AlertsController());
+
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Alerts'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Text('Inspector Alerts Screen', style: TextStyle(fontSize: 24)),
-      ),
+      body: AlertsView()
     );
   }
 }

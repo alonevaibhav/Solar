@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:solar_app/Component/Inspector/TicketPage/ticket_card.dart';
+import 'package:solar_app/Route%20Manager/app_routes.dart';
 import '../../../Controller/Inspector/ticket_controller.dart';
 
 
@@ -280,6 +281,10 @@ class TicketView extends GetView<TicketController> {
               ticket: ticket,
               onCallPressed: controller.callContact,
               onNavigatePressed: controller.navigateToLocation,
+              onTap: (ticket) {
+                // Navigate to the ticket detail view and pass the ticket data
+                Get.toNamed(AppRoutes.inspectorTicketDetailView, arguments: ticket);
+              },
             );
           },
         ),

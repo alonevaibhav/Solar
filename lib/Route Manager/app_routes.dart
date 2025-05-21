@@ -4,7 +4,9 @@ import '../Component/Cleaner/cleanup_history_list.dart';
 import '../Component/Cleaner/help_support_view.dart';
 import '../Component/Cleaner/task_detail_view.dart';
 import '../Component/Cleaner/update_view.dart';
+import '../Component/Inspector/AlertsView/alerts_view.dart';
 import '../Component/Inspector/AreaInspectionView/area_history.dart';
+import '../Component/Inspector/TicketPage/ticket_detail_view.dart';
 import '../Component/Inspector/TicketPage/ticket_view.dart';
 import '../Component/Inspector/plant_details_view.dart';
 import '../View/Auth/login_page.dart';
@@ -39,6 +41,8 @@ class AppRoutes {
   static const inspectorPlantCard = '/inspector/inspectorPlantCard';
   static const inspectorHistoryPage = '/inspector/inspectorHistoryPage';
   static const inspectorTicketView = '/inspector/inspectorTicketView';
+  static const inspectorTicketDetailView = '/inspector/inspectorTicketDetailView';
+  static const inspectorAlertView = '/inspector/inspectorAlertView';
 
   // All of your pages
   static final routes = <GetPage>[
@@ -115,6 +119,16 @@ class AppRoutes {
     GetPage(
       name: inspectorTicketView,
       page: () => TicketView(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: inspectorTicketDetailView,
+      page: () => TicketDetailView(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: inspectorAlertView,
+      page: () => AlertsView(),
       binding: AppBindings(),
     ),
   ];
