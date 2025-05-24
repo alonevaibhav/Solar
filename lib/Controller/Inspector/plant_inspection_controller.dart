@@ -109,7 +109,7 @@ class PlantInspectionController extends GetxController {
       // Sample inspection items
       final items = [
         {
-          'plantName': 'Abc Plant',
+          'plantName': 'momo Plant',
           'location': 'XYZ-1, Pune Maharashtra(12345)',
           'progress': 1.0,
           'status': 'completed',

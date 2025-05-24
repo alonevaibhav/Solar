@@ -260,17 +260,19 @@ class TicketDetailView extends GetView<TicketController> {
                     ),
                     SizedBox(height: 14.4.h),
                     Container(
+
                       decoration: BoxDecoration(
                         color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(10.8.r),
                       ),
                       padding: EdgeInsets.all(14.4.r),
-                      height: 135.h,
+                      height: 200.h,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Spacer(),
                           Container(
+
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(21.6.r),

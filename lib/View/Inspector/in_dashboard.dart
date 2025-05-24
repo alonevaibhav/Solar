@@ -5,7 +5,7 @@ import 'package:solar_app/View/Inspector/user_profile.dart';
 
 import '../../Component/Inspector/AlertsView/alerts_view.dart';
 import '../../Component/Inspector/TicketPage/ticket_view.dart';
-import '../../Controller/AlertView/alerts_controller.dart';
+import '../../Controller/Inspector/alerts_controller.dart';
 import '../../Controller/Inspector/area_inspection_controller.dart';
 import '../../Controller/Inspector/plant_inspection_controller.dart';
 import '../../Controller/Inspector/ticket_controller.dart';

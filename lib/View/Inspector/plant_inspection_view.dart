@@ -102,7 +102,7 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
       children: [
         Expanded(
           child: DashboardCard(
-            color: const Color(0xFFFFD54F),
+            color: const Color(0xFFF5C84F),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -507,11 +507,9 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
             child: InspectionItem(
               plantName: controller.inspectionItems[i]['plantName'] ?? '',
               location: controller.inspectionItems[i]['location'] ?? '',
-              progress: (controller.inspectionItems[i]['progress'] ?? 0.0)
-                  .toDouble(), // Convert to double
+              progress: (controller.inspectionItems[i]['progress'] ?? 0.0).toDouble(), // Convert to double
               eta: controller.inspectionItems[i]['eta'],
-              color:
-                  Color(controller.inspectionItems[i]['color'] ?? 0xFFFF5252),
+              color: Color(controller.inspectionItems[i]['color'] ?? 0xFFFF5252),
               onTap: () => controller.navigateToInspectionDetails(i),
             ),
           ),

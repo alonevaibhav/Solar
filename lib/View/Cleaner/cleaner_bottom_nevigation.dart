@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CleanerBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -14,17 +15,18 @@ class CleanerBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(45.0),
+      padding: EdgeInsets.all(45.0.w), // Responsive padding
       child: Container(
-        height: 60,
+        height: 50.h, // Responsive height
+        width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.black,
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20.r), // Responsive radius
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              blurRadius: 10.r, // Responsive blur
+              offset: Offset(0, 5.h), // Responsive shadow offset
             ),
           ],
         ),
@@ -57,16 +59,20 @@ class CleanerBottomNavigation extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: 20.w,
+          vertical: 10.h,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
-              size: 35,
+              size: 30.sp, // Responsive icon size
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4.h), // Responsive spacing
+            // Optional: Add a label here if needed
           ],
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../Controller/AlertView/alerts_controller.dart';
+import '../Controller/Inspector/alerts_controller.dart';
 import '../Controller/Cleaner/cleanup_controller.dart';
 import '../Controller/Cleaner/general_information_controller.dart';
 import '../Controller/Cleaner/profile_controller.dart';
@@ -19,8 +19,7 @@ class AppBindings extends Bindings {
     Get.lazyPut<ProfileController>(() => ProfileController(),);
     Get.lazyPut<GeneralInformationController>(() => GeneralInformationController(),);
     Get.lazyPut<PlantManagementController>(() => PlantManagementController(),);
-    Get.lazyPut<AlertsController>(() => AlertsController(),
-      fenix: true, // Keep the controller in memory even when not in use
+    Get.lazyPut<AlertsController>(() => AlertsController(), fenix: true, // Keep the controller in memory even when not in use
     );
   }
 }
