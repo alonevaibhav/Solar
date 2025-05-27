@@ -26,7 +26,7 @@ class ApiResponse<T> {
 
 class ApiService {
 
-  static const String baseUrl = 'https://b-designer-api.vercel.app/';
+  static const String baseUrl = "https://7hmgmjzr-3000.inc1.devtunnels.ms";
   static const Duration _timeoutDuration = Duration(seconds: 30);
 
   static SharedPreferences? _prefs;
