@@ -60,7 +60,7 @@ class ProfileController extends GetxController {
     Get.toNamed(AppRoutes.cleanerAssignPlant);
   }
   void goToPlantInfo() {
-    Get.toNamed(AppRoutes.cleanerAssignPlant);
+    Get.toNamed(AppRoutes.cleanerPlantInfo);
   }
 
   // Navigate to help and support screen

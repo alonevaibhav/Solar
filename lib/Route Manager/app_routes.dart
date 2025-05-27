@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import '../Component/Cleaner/PlantInfo/cleaner_details_page.dart';
+import '../Component/Cleaner/PlantInfo/cleaner_info_page.dart';
 import '../Component/Cleaner/assigned_plants_view.dart';
 import '../Component/Cleaner/cleanup_history_list.dart';
 import '../Component/Cleaner/help_support_view.dart';
@@ -33,6 +35,8 @@ class AppRoutes {
   static const cleanerAssignPlant = '/cleaner/cleanerAssignPlant';
   static const cleanerHelp = '/cleaner/cleanerHelp';
   static const cleanerCleanupHistory = '/cleaner/cleanerCleanupHistory';
+  static const cleanerPlantInfo = '/cleaner/cleanerPlantInfo';
+  static const cleanerPlantInfoDetailsPage = '/cleaner/cleanerPlantInfoDetailsPage';
 
   // Inspector routes
 
@@ -43,8 +47,7 @@ class AppRoutes {
   static const inspectorPlantCard = '/inspector/inspectorPlantCard';
   static const inspectorHistoryPage = '/inspector/inspectorHistoryPage';
   static const inspectorTicketView = '/inspector/inspectorTicketView';
-  static const inspectorTicketDetailView =
-      '/inspector/inspectorTicketDetailView';
+  static const inspectorTicketDetailView = '/inspector/inspectorTicketDetailView';
   static const inspectorAlertView = '/inspector/inspectorAlertView';
   static const inspectorDetailsSection = '/inspector/inspectorDetailsSection';
   static const inspectorPlantInfo = '/inspector/inspectorPlantInfo';
@@ -93,6 +96,27 @@ class AppRoutes {
       page: () => CleanUpHistoryView(),
       binding: AppBindings(),
     ),
+    GetPage(
+      name: cleanerPlantInfo,
+      page: () => CleanerInfoPage(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: cleanerPlantInfoDetailsPage,
+      page: () => CleanerDetailsPage(),
+      binding: AppBindings(),
+    ),
+
+
+
+
+
+
+
+
+
+
+
 
     // Inspector routes
     GetPage(

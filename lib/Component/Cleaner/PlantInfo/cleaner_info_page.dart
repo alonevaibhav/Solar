@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:solar_app/Component/Inspector/PlantInfo/plant_info_card.dart';
+import '../../../Controller/Cleaner/plant_info_controller.dart';
 import '../../../Controller/Inspector/plant_info_controller.dart';
+import 'cleaner_plant_info_card.dart';
 
-class PlantInfoView extends StatelessWidget {
-  const PlantInfoView({super.key});
+class CleanerInfoPage extends StatelessWidget {
+  const CleanerInfoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final PlantInfoController controller = Get.put(PlantInfoController());
+    final CleanerPlantInfoController controller = Get.put(CleanerPlantInfoController());
 
     return Scaffold(
       backgroundColor: Colors.grey[100],

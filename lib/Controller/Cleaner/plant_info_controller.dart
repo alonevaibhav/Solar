@@ -5,7 +5,7 @@ import '../../API Service/api_service.dart';
 import '../../Route Manager/app_routes.dart';
 import '../../utils/constants.dart';
 
-class PlantInfoController extends GetxController {
+class CleanerPlantInfoController extends GetxController {
   // Observable lists and variables
   final plants = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
@@ -34,7 +34,7 @@ class PlantInfoController extends GetxController {
 
       // Use the UID as the inspector ID to fetch plants
       final response = await ApiService.get<Map<String, dynamic>>(
-        endpoint: getInspectorPlantsUrl(int.parse(storedUid)),
+        endpoint: getCleanerPlantsInfoUrl(int.parse(storedUid)),
         fromJson: (json) => json as Map<String, dynamic>,
       );
 
@@ -92,7 +92,7 @@ class PlantInfoController extends GetxController {
   void viewPlantDetails(int plantId) {
     final plant = plants.firstWhere((plant) => plant['id'] == plantId);
     selectedPlant.value = plant;
-    Get.toNamed(AppRoutes.inspectorDetailsSection, arguments: plant);
+    Get.toNamed(AppRoutes.cleanerPlantInfoDetailsPage, arguments: plant);
   }
 
   // Refresh plants data
