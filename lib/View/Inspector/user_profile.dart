@@ -36,6 +36,11 @@ class UserProfile extends GetView<IUserProfile> {
               title: 'Assigned Plants',
               onTap: controller.goToAssignedPlants,
             ),
+            _buildMenuOption(
+              icon: Icons.list_alt,
+              title: ' Plants Info ',
+              onTap: controller.goToPlantInfo,
+            ),
 
             _buildMenuOption(
               icon: Icons.headset_mic,
@@ -43,27 +48,6 @@ class UserProfile extends GetView<IUserProfile> {
               onTap: controller.goToHelpAndSupport,
             ),
 
-            // _buildMenuOption(
-            //   icon: Icons.history,
-            //   title: 'Clean-up History',
-            //   onTap: controller.goToCleanupHistory,
-            // ),
-
-            // SizedBox(height: 14.4.h),
-            //
-            // Padding(
-            //   padding: EdgeInsets.only(left: 14.4.w, bottom: 7.2.h),
-            //   child: Text(
-            //     'Preference',
-            //     style: TextStyle(
-            //       fontSize: 12.6.sp,
-            //       fontWeight: FontWeight.w500,
-            //       color: Colors.black87,
-            //     ),
-            //   ),
-            // ),
-
-            // _buildThemeToggle(),
             SizedBox(height: 14.4.h),
 
             Padding(

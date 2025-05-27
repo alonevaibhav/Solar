@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Controller/login_controller.dart';
 import '../../Route Manager/app_routes.dart';
 
 class TokenManager {
@@ -105,9 +106,11 @@ class TokenManager {
 
   // Safe navigation to login
   static Future<void> _navigateToLogin() async {
-    if (Get.currentRoute != '/login') {
-      Get.offAllNamed('/login');
-    }
+    final loginController = Get.isRegistered<LoginController>()
+        ? Get.find<LoginController>()
+        : Get.put(LoginController());
+
+    await loginController.logout(sessionExpired: true);
   }
 
   // Get user role from SharedPreferences
@@ -149,16 +152,16 @@ class TokenManager {
   static Timer? _tokenExpirationTimer;
 
   static void startTokenExpirationTimer() {
-    // Cancel existing timer if any
-    stopTokenExpirationTimer();
+    stopTokenExpirationTimer(); // Cancel if already running
 
     _tokenExpirationTimer = Timer.periodic(Duration(minutes: 5), (timer) async {
-      // Only check if not currently navigating
       if (!_isNavigating && await isTokenExpired()) {
-        print('Token expired during periodic check, navigating to login...');
-        if (Get.currentRoute != '/login') {
-          Get.offAllNamed('/login');
-        }
+        print('Token expired during periodic check, logging out...');
+        final loginController = Get.isRegistered<LoginController>()
+            ? Get.find<LoginController>()
+            : Get.put(LoginController());
+
+        await loginController.logout(sessionExpired: true);
       }
     });
   }

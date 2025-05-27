@@ -9,7 +9,6 @@ import 'package:path/path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class ApiResponse<T> {
   final bool success;
   final T? data;
@@ -25,7 +24,6 @@ class ApiResponse<T> {
 }
 
 class ApiService {
-
   static const String baseUrl = "https://7hmgmjzr-3000.inc1.devtunnels.ms";
   static const Duration _timeoutDuration = Duration(seconds: 30);
 
@@ -36,17 +34,39 @@ class ApiService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+
+  /// ==================== JWT Management ====================
   static Future<void> setToken(String token) async {
-    await _prefs?.setString('token', token);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
   }
 
-  static String? getToken() => _prefs?.getString('token');
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
 
   static Future<void> setUid(String uid) async {
-    await _prefs?.setString('uid', uid);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('uid', uid);
   }
 
-  static String? getUid() => _prefs?.getString('uid');
+  static Future<String?> getUid() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('uid');
+  }
+
+  // static Future<void> setToken(String token) async {
+  //   await _prefs?.setString('token', token);
+  // }
+  //
+  // static String? getToken() => _prefs?.getString('token');
+  //
+  // static Future<void> setUid(String uid) async {
+  //   await _prefs?.setString('uid', uid);
+  // }
+  //
+  // static String? getUid() => _prefs?.getString('uid');
 
   static Future<void> clearAuthData() async {
     await _prefs?.remove('token');
@@ -72,13 +92,14 @@ class ApiService {
     required T Function(dynamic) fromJson,
     bool includeToken = true,
   }) async {
-    final uri = Uri.parse('$baseUrl$endpoint')
-        .replace(queryParameters: queryParams);
+    final uri =
+        Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
     return _sendRequest<T>(
       method: 'GET',
       uri: uri,
       fromJson: fromJson,
-      requestFunc: () => http.get(uri, headers: _getHeaders(includeToken: includeToken)),
+      requestFunc: () =>
+          http.get(uri, headers: _getHeaders(includeToken: includeToken)),
     );
   }
 
@@ -94,8 +115,9 @@ class ApiService {
       uri: uri,
       body: body,
       fromJson: fromJson,
-      requestFunc: () =>
-          http.post(uri, headers: _getHeaders(includeToken: includeToken), body: json.encode(body)),
+      requestFunc: () => http.post(uri,
+          headers: _getHeaders(includeToken: includeToken),
+          body: json.encode(body)),
     );
   }
 
@@ -111,8 +133,9 @@ class ApiService {
       uri: uri,
       body: body,
       fromJson: fromJson,
-      requestFunc: () =>
-          http.put(uri, headers: _getHeaders(includeToken: includeToken), body: json.encode(body)),
+      requestFunc: () => http.put(uri,
+          headers: _getHeaders(includeToken: includeToken),
+          body: json.encode(body)),
     );
   }
 
@@ -200,9 +223,9 @@ class ApiService {
   }
 
   static ApiResponse<T> _handleResponse<T>(
-      http.Response response,
-      T Function(dynamic) fromJson,
-      ) {
+    http.Response response,
+    T Function(dynamic) fromJson,
+  ) {
     final statusCode = response.statusCode;
     final responseBody = response.body;
 
@@ -217,7 +240,8 @@ class ApiService {
         );
       } else {
         final errorMessage = _extractErrorMessage(jsonResponse);
-        _logError('RESPONSE', response.request?.url, errorMessage, statusCode: statusCode);
+        _logError('RESPONSE', response.request?.url, errorMessage,
+            statusCode: statusCode);
         return ApiResponse<T>(
           success: false,
           errorMessage: errorMessage,
@@ -235,10 +259,10 @@ class ApiService {
   }
 
   static ApiResponse<T> _handleError<T>(
-      String method,
-      Uri uri,
-      String message,
-      ) {
+    String method,
+    Uri uri,
+    String message,
+  ) {
     _logError(method, uri, message);
     return ApiResponse<T>(
       success: false,
@@ -306,12 +330,13 @@ class ApiService {
       final statusEmoji = statusCode >= 200 && statusCode < 300 ? '✅' : '❌';
 
       print('┌───────────────────────────────────────────────────');
-      print('│ $statusEmoji API RESPONSE: ${response.request?.method} ${response.request?.url}');
+      print(
+          '│ $statusEmoji API RESPONSE: ${response.request?.method} ${response.request?.url}');
       print('│ 🔢 STATUS CODE: $statusCode');
       try {
         final jsonResponse = json.decode(response.body);
         final prettyJson =
-        const JsonEncoder.withIndent('  ').convert(jsonResponse);
+            const JsonEncoder.withIndent('  ').convert(jsonResponse);
         print('│ 📄 RESPONSE BODY:');
         for (var line in prettyJson.split('\n')) {
           print('│   $line');
@@ -382,13 +407,11 @@ class MultipartFiles {
   }
 }
 
-
 // Shared preference Example:
 // await ApiService.setToken(response.data['token']);
 // await ApiService.setUid(response.data['uid']);
 // final token = ApiService.getToken();
 // final uid = ApiService.getUid();
-
 
 // Token Passing Example:
 // final response = await ApiService.post<User>(
@@ -397,8 +420,6 @@ class MultipartFiles {
 // fromJson: (json) => User.fromJson(json),
 // includeToken: false, // 👈 token will NOT be sent
 // );
-
-
 
 // //it used in simgle dataset come
 // fromJson: (json) => User.fromJson(json),

@@ -87,11 +87,13 @@ class LoginApiResponse {
 class LoginData {
   final String token;
   final String role;
+  final String uid;
   final String? expirationTime; // Optional expiration time
 
   const LoginData({
     required this.token,
     required this.role,
+    required this.uid,
     this.expirationTime, // Optional expiration time
   });
 
@@ -99,6 +101,7 @@ class LoginData {
     return LoginData(
       token: json['token'] ?? '',
       role: json['role'] ?? '',
+      uid: json['uid'] ?? '',
       expirationTime: json['expirationTime'], // Optional expiration time
     );
   }

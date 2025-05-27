@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/Route%20Manager/app_routes.dart';
 
+import '../../utils/dialog_box.dart';
+import '../login_controller.dart';
+
 class IUserProfile extends GetxController {
   // User information
   final RxString userName = 'Ravi Sharma'.obs;
@@ -58,6 +61,10 @@ class IUserProfile extends GetxController {
   void goToAssignedPlants() {
     Get.toNamed(AppRoutes.inspectorAssignedPlants);
   }
+  // Navigate to assigned plants screen
+  void goToPlantInfo() {
+    Get.toNamed(AppRoutes.inspectorPlantInfo);
+  }
 
   // Navigate to help and support screen
   void goToHelpAndSupport() {
@@ -69,78 +76,53 @@ class IUserProfile extends GetxController {
     Get.toNamed(AppRoutes.cleanerCleanupHistory);
   }
 
-
   // Logout function
   void logout() {
     Get.dialog(
-      AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              // TODO: Implement actual logout logic
-              Get.back();
-              Get.offAllNamed('/login');
-            },
-            child: const Text('Logout'),
-          ),
-        ],
+      ConfirmationDialog(
+        title: 'Logout',
+        content: 'Are you sure you want to logout?',
+        confirmButtonText: 'Logout',
+        cancelButtonText: 'Cancel',
+        onConfirm: () {
+          final loginController = Get.find<LoginController>();
+          loginController.logout();
+        },
       ),
     );
   }
+
 
   // Delete account function
   void showDeleteConfirmation() {
     Get.dialog(
-      AlertDialog(
-        title: const Text('Delete Account'),
-        content: const Text(
-            'Are you sure you want to delete your account? This action cannot be undone.'
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              // TODO: Implement actual account deletion logic
-              Get.back();
+      ConfirmationDialog(
+        title: 'Delete Account',
+        content:
+            'Are you sure you want to delete your account? This action cannot be undone.',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        onConfirm: () {
+          // Show loading dialog
+          Get.dialog(
+            const Center(child: CircularProgressIndicator()),
+            barrierDismissible: false,
+          );
 
-              // Show loading dialog
-              Get.dialog(
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                barrierDismissible: false,
-              );
-
-              // Simulate API call
-              Future.delayed(const Duration(seconds: 2), () {
-                Get.back(); // Close loading dialog
-                Get.offAllNamed('/login');
-                Get.snackbar(
-                  'Account Deleted',
-                  'Your account has been successfully deleted',
-                  snackPosition: SnackPosition.BOTTOM,
-                );
-              });
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
+          // Simulate API call
+          Future.delayed(const Duration(seconds: 2), () {
+            Get.back(); // Close loading dialog
+            Get.offAllNamed('/login');
+            Get.snackbar(
+              'Account Deleted',
+              'Your account has been successfully deleted',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          });
+        },
       ),
     );
   }
-
-
-
-
 
   // Navigate to home
   void goToHome() {

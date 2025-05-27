@@ -267,8 +267,11 @@
 // }
 
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../API Service/api_service.dart';
 import '../Model/login_model.dart';
@@ -402,11 +405,29 @@ class LoginController extends GetxController {
         final loginResponse = response.data!;
 
         if (loginResponse.success && loginResponse.data != null) {
-          // Save token and user data to SharedPreferences
-          await ApiService.setToken(loginResponse.data!.token);
+          final token = loginResponse.data!.token;
+
+          // Save token first
+          await ApiService.setToken(token);
+
+          // Decode token to get 'id'
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+          String userId = decodedToken['id'];
+
+          // Save decoded UID in SharedPreferences
+          await ApiService.setUid(userId);
+
+          // Now print to verify
+          final storedToken = await ApiService.getToken();
+          final storedUid = await ApiService.getUid();
+
+          print('Token: $storedToken');
+          print('UID from decoded token: $storedUid');
+          log('Token: $storedToken');
+          log('UID: $storedUid');
 
           // Save token and expiration time using TokenManager
-          await TokenManager.saveToken(loginResponse.data!.token, expirationTime: loginResponse.data!.expirationTime);
+          await TokenManager.saveToken(token, expirationTime: loginResponse.data!.expirationTime);
 
           // You can also save additional user data
           await _saveUserData(loginResponse.data!);
@@ -488,12 +509,13 @@ class LoginController extends GetxController {
 
   /// Check if user is already logged in
   Future<bool> isLoggedIn() async {
-    final token = ApiService.getToken();
+    final token = await ApiService.getToken(); // await here
     return token != null && token.isNotEmpty;
   }
 
+
   /// Logout user and clear stored data
-  Future<void> logout() async {
+  Future<void> logout({bool sessionExpired = false}) async {
     try {
       isLoading.value = true;
 
@@ -507,18 +529,23 @@ class LoginController extends GetxController {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('user_role');
 
-      // Clear form
+      // Optional: clear forms if needed
       clearForm();
 
       // Navigate to login screen
-      Get.offAllNamed(AppRoutes.login);
+      if (Get.currentRoute != AppRoutes.login) {
+        Get.offAllNamed(AppRoutes.login);
+      }
 
+      // Show message
       Get.snackbar(
-        'Success',
-        'Logged out successfully',
-        backgroundColor: Colors.green.withOpacity(0.1),
-        colorText: Colors.green,
-        duration: const Duration(seconds: 2),
+        sessionExpired ? 'Session Expired' : 'Success',
+        sessionExpired ? 'Your session has expired. Please log in again.' : 'Logged out successfully',
+        backgroundColor: sessionExpired
+            ? Colors.orange.withOpacity(0.1)
+            : Colors.green.withOpacity(0.1),
+        colorText: sessionExpired ? Colors.orange : Colors.green,
+        duration: const Duration(seconds: 3),
       );
     } catch (e) {
       Get.snackbar(
@@ -532,6 +559,8 @@ class LoginController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
 }
 
 extension LoginModelExtension on LoginModel {

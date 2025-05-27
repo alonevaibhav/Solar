@@ -6,6 +6,8 @@ import '../Component/Cleaner/task_detail_view.dart';
 import '../Component/Cleaner/update_view.dart';
 import '../Component/Inspector/AlertsView/alerts_view.dart';
 import '../Component/Inspector/AreaInspectionView/area_history.dart';
+import '../Component/Inspector/PlantInfo/plant _info.dart';
+import '../Component/Inspector/PlantInfo/plant_details_view.dart';
 import '../Component/Inspector/TicketPage/ticket_detail_view.dart';
 import '../Component/Inspector/TicketPage/ticket_view.dart';
 import '../Component/Inspector/plant_details_view.dart';
@@ -41,8 +43,11 @@ class AppRoutes {
   static const inspectorPlantCard = '/inspector/inspectorPlantCard';
   static const inspectorHistoryPage = '/inspector/inspectorHistoryPage';
   static const inspectorTicketView = '/inspector/inspectorTicketView';
-  static const inspectorTicketDetailView = '/inspector/inspectorTicketDetailView';
+  static const inspectorTicketDetailView =
+      '/inspector/inspectorTicketDetailView';
   static const inspectorAlertView = '/inspector/inspectorAlertView';
+  static const inspectorDetailsSection = '/inspector/inspectorDetailsSection';
+  static const inspectorPlantInfo = '/inspector/inspectorPlantInfo';
 
   // All of your pages
   static final routes = <GetPage>[
@@ -121,6 +126,18 @@ class AppRoutes {
       page: () => TicketView(),
       binding: AppBindings(),
     ),
+
+    GetPage(
+      name: inspectorDetailsSection,
+      page: () => InfoPlantDetailsView(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: inspectorPlantInfo,
+      page: () => PlantInfoView(),
+      binding: AppBindings(),
+    ),
+
     GetPage(
       name: inspectorTicketDetailView,
       page: () => TicketDetailView(),

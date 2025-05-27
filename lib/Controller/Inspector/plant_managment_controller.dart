@@ -1,5 +1,3 @@
-
-
 import 'package:get/get.dart';
 
 import '../../Route Manager/app_routes.dart';
@@ -98,7 +96,7 @@ class PlantManagementController extends GetxController {
 
       // Update the plant with the new schedule
       final List<Map<String, dynamic>> schedules =
-      List<Map<String, dynamic>>.from(plant['schedules'] ?? []);
+          List<Map<String, dynamic>>.from(plant['schedules'] ?? []);
       schedules.add(newSchedule);
       plant['schedules'] = schedules;
 
@@ -137,10 +135,10 @@ class PlantManagementController extends GetxController {
 
       final plant = Map<String, dynamic>.from(plants[plantIndex]);
       final List<Map<String, dynamic>> schedules =
-      List<Map<String, dynamic>>.from(plant['schedules'] ?? []);
+          List<Map<String, dynamic>>.from(plant['schedules'] ?? []);
 
       final scheduleIndex =
-      schedules.indexWhere((schedule) => schedule['id'] == scheduleId);
+          schedules.indexWhere((schedule) => schedule['id'] == scheduleId);
       if (scheduleIndex == -1) throw Exception('Schedule not found');
 
       schedules[scheduleIndex] = {
@@ -167,7 +165,8 @@ class PlantManagementController extends GetxController {
   }
 
   // Delete a cleaning schedule
-  Future<void> markScheduleForDeletion(String plantId, String scheduleId) async {
+  Future<void> markScheduleForDeletion(
+      String plantId, String scheduleId) async {
     try {
       isLoading.value = true;
 
@@ -180,10 +179,10 @@ class PlantManagementController extends GetxController {
 
       final plant = Map<String, dynamic>.from(plants[plantIndex]);
       final List<Map<String, dynamic>> schedules =
-      List<Map<String, dynamic>>.from(plant['schedules'] ?? []);
+          List<Map<String, dynamic>>.from(plant['schedules'] ?? []);
 
       final scheduleIndex =
-      schedules.indexWhere((schedule) => schedule['id'] == scheduleId);
+          schedules.indexWhere((schedule) => schedule['id'] == scheduleId);
       if (scheduleIndex == -1) throw Exception('Schedule not found');
 
       // Remove the schedule from the list
@@ -206,7 +205,6 @@ class PlantManagementController extends GetxController {
       isLoading.value = false;
     }
   }
-
 
   // Update alert level
   void updateAlertLevel(String level) {

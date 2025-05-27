@@ -81,6 +81,7 @@ import 'View/Auth/token_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await ApiService.init();
 
   // Determine initial route based on token status
@@ -98,9 +99,6 @@ void main() async {
             break;
           case 'inspector':
             initialRoute = AppRoutes.inspector;
-            break;
-          case 'user':
-            initialRoute = AppRoutes.user;
             break;
           default:
             print('Unknown role: $role, redirecting to login');
