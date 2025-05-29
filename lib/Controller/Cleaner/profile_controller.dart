@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/Route%20Manager/app_routes.dart';
 import '../../utils/dialog_box.dart';
+import '../login_controller.dart';
 
 class ProfileController extends GetxController {
   // User information
-  final RxString userName = 'Ravi Sharma'.obs;
-  final RxString userPhone = '9876543210'.obs;
+  final RxString name = 'Ravi Sharma'.obs;
+  final RxString userName = 'ravisharma'.obs;
   final RxString userAddress = 'Rajnagar, Punjab'.obs;
 
   // Theme state
@@ -37,8 +38,8 @@ class ProfileController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 300));
 
       // Mock data loading (in a real app, this would come from API or local storage)
-      userName.value = 'Ravi Sharma';
-      userPhone.value = '9876543210';
+      name.value = 'Ravi Sharma';
+      userName.value = 'ravisharma';
       userAddress.value = 'Rajnagar, Punjab';
     } catch (e) {
       Get.snackbar(
@@ -83,8 +84,8 @@ class ProfileController extends GetxController {
         confirmButtonText: 'Logout',
         cancelButtonText: 'Cancel',
         onConfirm: () {
-          Get.back(); // Close dialog
-          Get.offAllNamed('/login');
+          final loginController = Get.find<LoginController>();
+          loginController.logout();
         },
       ),
     );

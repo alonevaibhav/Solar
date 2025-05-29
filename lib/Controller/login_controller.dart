@@ -1,9 +1,15 @@
+//
+//
+// import 'dart:developer';
+//
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
+// import 'package:jwt_decoder/jwt_decoder.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import '../API Service/api_service.dart';
 // import '../Model/login_model.dart';
 // import '../Route Manager/app_routes.dart';
+// import '../View/Auth/token_manager.dart';
 // import '../utils/constants.dart';
 //
 // class LoginController extends GetxController {
@@ -11,8 +17,7 @@
 //   final formKey = GlobalKey<FormState>();
 //
 //   // Text editing controllers
-//   final usernameController =
-//       TextEditingController(); // Changed from emailController
+//   final usernameController = TextEditingController(); // Changed from emailController
 //   final passwordController = TextEditingController();
 //
 //   // Observable states
@@ -28,9 +33,9 @@
 //   void onInit() {
 //     super.onInit();
 //
-//     // Add listeners to update loginModel when fields change
+//     // No need to check token expiration here since it's handled in main.dart
+//     // Just set up the form listeners
 //     usernameController.addListener(() {
-//       // Changed from emailController
 //       updateLoginModel();
 //     });
 //
@@ -44,6 +49,7 @@
 //     // Dispose controllers
 //     usernameController.dispose(); // Changed from emailController
 //     passwordController.dispose();
+//     TokenManager.stopTokenExpirationTimer();
 //     super.onClose();
 //   }
 //
@@ -132,8 +138,29 @@
 //         final loginResponse = response.data!;
 //
 //         if (loginResponse.success && loginResponse.data != null) {
-//           // Save token and user data to SharedPreferences
-//           await ApiService.setToken(loginResponse.data!.token);
+//           final token = loginResponse.data!.token;
+//
+//           // Save token first
+//           await ApiService.setToken(token);
+//
+//           // Decode token to get 'id'
+//           Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+//           String userId = decodedToken['id'];
+//
+//           // Save decoded UID in SharedPreferences
+//           await ApiService.setUid(userId);
+//
+//           // Now print to verify
+//           final storedToken = await ApiService.getToken();
+//           final storedUid = await ApiService.getUid();
+//
+//           print('Token: $storedToken');
+//           print('UID from decoded token: $storedUid');
+//           log('Token: $storedToken');
+//           log('UID: $storedUid');
+//
+//           // Save token and expiration time using TokenManager
+//           await TokenManager.saveToken(token, expirationTime: loginResponse.data!.expirationTime);
 //
 //           // You can also save additional user data
 //           await _saveUserData(loginResponse.data!);
@@ -199,7 +226,7 @@
 //         Get.offAllNamed(AppRoutes.inspector);
 //         break;
 //       case UserRole.user:
-//         // Handle user role or redirect to appropriate screen
+//       // Handle user role or redirect to appropriate screen
 //         Get.snackbar('Info', 'User role navigation not implemented yet');
 //         break;
 //     }
@@ -215,34 +242,43 @@
 //
 //   /// Check if user is already logged in
 //   Future<bool> isLoggedIn() async {
-//     final token = ApiService.getToken();
+//     final token = await ApiService.getToken(); // await here
 //     return token != null && token.isNotEmpty;
 //   }
 //
+//
 //   /// Logout user and clear stored data
-//   Future<void> logout() async {
+//   Future<void> logout({bool sessionExpired = false}) async {
 //     try {
 //       isLoading.value = true;
 //
 //       // Clear API service stored data
 //       await ApiService.clearAuthData();
 //
+//       // Clear token and expiration time
+//       await TokenManager.clearToken();
+//
 //       // Clear additional user data
 //       final prefs = await SharedPreferences.getInstance();
 //       await prefs.remove('user_role');
 //
-//       // Clear form
+//       // Optional: clear forms if needed
 //       clearForm();
 //
 //       // Navigate to login screen
-//       Get.offAllNamed(AppRoutes.login);
+//       if (Get.currentRoute != AppRoutes.login) {
+//         Get.offAllNamed(AppRoutes.login);
+//       }
 //
+//       // Show message
 //       Get.snackbar(
-//         'Success',
-//         'Logged out successfully',
-//         backgroundColor: Colors.green.withOpacity(0.1),
-//         colorText: Colors.green,
-//         duration: const Duration(seconds: 2),
+//         sessionExpired ? 'Session Expired' : 'Success',
+//         sessionExpired ? 'Your session has expired. Please log in again.' : 'Logged out successfully',
+//         backgroundColor: sessionExpired
+//             ? Colors.orange.withOpacity(0.1)
+//             : Colors.green.withOpacity(0.1),
+//         colorText: sessionExpired ? Colors.orange : Colors.green,
+//         duration: const Duration(seconds: 3),
 //       );
 //     } catch (e) {
 //       Get.snackbar(
@@ -256,19 +292,21 @@
 //       isLoading.value = false;
 //     }
 //   }
+//
+//
 // }
 //
 // extension LoginModelExtension on LoginModel {
 //   static LoginModel empty() => const LoginModel(
-//         username: '', // Changed from email to username
-//         password: '',
-//         role: '',
-//       );
+//     username: '', // Changed from email to username
+//     password: '',
+//     role: '',
+//   );
 // }
+//
 
 
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -284,7 +322,7 @@ class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   // Text editing controllers
-  final usernameController = TextEditingController(); // Changed from emailController
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
   // Observable states
@@ -296,12 +334,20 @@ class LoginController extends GetxController {
   // Reactive form data
   var loginModel = LoginModel.empty().obs;
 
+  // User profile data - Observable for UI updates
+  var currentUserProfile = Rxn<UserProfile>();
+  var currentUserName = ''.obs;
+  var currentUsername = ''.obs;
+  var currentDistributorName = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
 
-    // No need to check token expiration here since it's handled in main.dart
-    // Just set up the form listeners
+    // Load saved user data on initialization
+    _loadSavedUserData();
+
+    // Set up form listeners
     usernameController.addListener(() {
       updateLoginModel();
     });
@@ -313,17 +359,31 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-    // Dispose controllers
-    usernameController.dispose(); // Changed from emailController
+    usernameController.dispose();
     passwordController.dispose();
     TokenManager.stopTokenExpirationTimer();
     super.onClose();
   }
 
+  /// Load saved user data from SharedPreferences
+  Future<void> _loadSavedUserData() async {
+    try {
+      final userName = await UserSession.getUserName();
+      final username = await UserSession.getUsername();
+      final distributorName = await UserSession.getDistributorName();
+
+      if (userName != null) currentUserName.value = userName;
+      if (username != null) currentUsername.value = username;
+      if (distributorName != null) currentDistributorName.value = distributorName;
+    } catch (e) {
+      print('Error loading saved user data: $e');
+    }
+  }
+
   /// Updates the login model with current field values
   void updateLoginModel() {
     loginModel.value = LoginModel(
-      username: usernameController.text, // Changed from email to username
+      username: usernameController.text,
       password: passwordController.text,
       role: selectedRole.value,
     );
@@ -342,12 +402,9 @@ class LoginController extends GetxController {
 
   /// Validates username format
   String? validateUsername(String? value) {
-    // Changed from validateEmail
     if (value == null || value.isEmpty) {
-      return 'Username is required'; // Changed message
+      return 'Username is required';
     }
-
-    // Add any additional username validation logic if needed
     return null;
   }
 
@@ -375,37 +432,33 @@ class LoginController extends GetxController {
   /// Handles form submission with real API integration
   Future<void> login() async {
     try {
-      // Clear previous error messages
       errorMessage.value = '';
 
-      // Validate form
       if (!formKey.currentState!.validate()) {
         return;
       }
 
-      // Set loading state
       isLoading.value = true;
 
-      // Prepare API request body
       final requestBody = {
-        'username': loginModel.value.username, // Changed from email to username
+        'username': loginModel.value.username,
         'password': loginModel.value.password,
         'role': loginModel.value.role,
       };
 
-      // Make API call
       final response = await ApiService.post<LoginApiResponse>(
-        endpoint: loginUrl, // Adjust endpoint as per your API
+        endpoint: loginUrl,
         body: requestBody,
         fromJson: (json) => LoginApiResponse.fromJson(json),
-        includeToken: false, // No token needed for login
+        includeToken: false,
       );
 
       if (response.success && response.data != null) {
         final loginResponse = response.data!;
 
         if (loginResponse.success && loginResponse.data != null) {
-          final token = loginResponse.data!.token;
+          final loginData = loginResponse.data!;
+          final token = loginData.token;
 
           // Save token first
           await ApiService.setToken(token);
@@ -413,46 +466,43 @@ class LoginController extends GetxController {
           // Decode token to get 'id'
           Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
           String userId = decodedToken['id'];
-
-          // Save decoded UID in SharedPreferences
           await ApiService.setUid(userId);
 
-          // Now print to verify
+          // Save token and expiration time using TokenManager
+          await TokenManager.saveToken(token, expirationTime: loginData.expirationTime);
+
+          // Save user profile data to SharedPreferences and update observables
+          await _saveUserProfileData(loginData);
+
+          // Debug logging
           final storedToken = await ApiService.getToken();
           final storedUid = await ApiService.getUid();
 
           print('Token: $storedToken');
           print('UID from decoded token: $storedUid');
+          log('User Profile: ${loginData.profile.name} (${loginData.profile.username})');
+          print('Distributor: ${loginData.profile.distributorName}');
+
           log('Token: $storedToken');
           log('UID: $storedUid');
+          log('Profile: ${loginData.profile.toJson()}');
 
-          // Save token and expiration time using TokenManager
-          await TokenManager.saveToken(token, expirationTime: loginResponse.data!.expirationTime);
-
-          // You can also save additional user data
-          await _saveUserData(loginResponse.data!);
-
-          // Success handling
           Get.snackbar(
             'Success',
-            loginResponse.message ?? 'Login successful!',
+            'Welcome ${loginData.profile.name}!', // Use profile name in welcome message
             backgroundColor: Colors.green.withOpacity(0.1),
             colorText: Colors.green,
             duration: const Duration(seconds: 2),
           );
 
-          // Navigate based on user role
-          _navigateByRole(UserRole.fromString(loginResponse.data!.role));
+          _navigateByRole(UserRole.fromString(loginData.role));
         } else {
-          // Handle login failure from API response
           throw Exception(loginResponse.message ?? 'Login failed');
         }
       } else {
-        // Handle API error
         throw Exception(response.errorMessage ?? 'Login failed');
       }
     } catch (e) {
-      // Error handling
       String errorMsg = e.toString().replaceAll('Exception: ', '');
       errorMessage.value = errorMsg;
       Get.snackbar(
@@ -467,19 +517,33 @@ class LoginController extends GetxController {
     }
   }
 
-  /// Save additional user data to SharedPreferences
-  Future<void> _saveUserData(LoginData userData) async {
+  /// Save user profile data to SharedPreferences and update observables
+  Future<void> _saveUserProfileData(LoginData loginData) async {
     try {
-      // You can save additional user information here
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_role', userData.role);
-      await prefs.setString('user_token', userData.token);
+      // Save to SharedPreferences using UserSession
+      await UserSession.saveSession(
+        token: loginData.token,
+        role: loginData.role,
+        profile: loginData.profile,
+      );
 
-      // Add more user data as needed
-      // await prefs.setString('user_id', userData.id);
-      // await prefs.setString('user_email', userData.email);
+      // Update observable variables for immediate UI updates
+      currentUserProfile.value = loginData.profile;
+      currentUserName.value = loginData.profile.name;
+      currentUsername.value = loginData.profile.username;
+      currentDistributorName.value = loginData.profile.distributorName;
+
+      // Save additional data to SharedPreferences for backward compatibility
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_role', loginData.role);
+      await prefs.setString('user_token', loginData.token);
+      await prefs.setString('user_name', loginData.profile.name);
+      await prefs.setString('username', loginData.profile.username);
+      await prefs.setInt('user_id', loginData.profile.id);
+      await prefs.setString('distributor_name', loginData.profile.distributorName);
+
     } catch (e) {
-      print('Error saving user data: $e');
+      print('Error saving user profile data: $e');
     }
   }
 
@@ -493,7 +557,6 @@ class LoginController extends GetxController {
         Get.offAllNamed(AppRoutes.inspector);
         break;
       case UserRole.user:
-      // Handle user role or redirect to appropriate screen
         Get.snackbar('Info', 'User role navigation not implemented yet');
         break;
     }
@@ -501,7 +564,7 @@ class LoginController extends GetxController {
 
   /// Clears all form fields
   void clearForm() {
-    usernameController.clear(); // Changed from emailController
+    usernameController.clear();
     passwordController.clear();
     selectedRole.value = '';
     errorMessage.value = '';
@@ -509,10 +572,9 @@ class LoginController extends GetxController {
 
   /// Check if user is already logged in
   Future<bool> isLoggedIn() async {
-    final token = await ApiService.getToken(); // await here
+    final token = await ApiService.getToken();
     return token != null && token.isNotEmpty;
   }
-
 
   /// Logout user and clear stored data
   Future<void> logout({bool sessionExpired = false}) async {
@@ -525,11 +587,16 @@ class LoginController extends GetxController {
       // Clear token and expiration time
       await TokenManager.clearToken();
 
-      // Clear additional user data
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('user_role');
+      // Clear all user session data
+      await UserSession.clearSession();
 
-      // Optional: clear forms if needed
+      // Clear observable variables
+      currentUserProfile.value = null;
+      currentUserName.value = '';
+      currentUsername.value = '';
+      currentDistributorName.value = '';
+
+      // Clear forms
       clearForm();
 
       // Navigate to login screen
@@ -537,7 +604,6 @@ class LoginController extends GetxController {
         Get.offAllNamed(AppRoutes.login);
       }
 
-      // Show message
       Get.snackbar(
         sessionExpired ? 'Session Expired' : 'Success',
         sessionExpired ? 'Your session has expired. Please log in again.' : 'Logged out successfully',
@@ -560,14 +626,9 @@ class LoginController extends GetxController {
     }
   }
 
-
+  /// Get current user profile information (useful for UI)
+  UserProfile? get userProfile => currentUserProfile.value;
+  String get userName => currentUserName.value;
+  String get username => currentUsername.value;
+  String get distributorName => currentDistributorName.value;
 }
-
-extension LoginModelExtension on LoginModel {
-  static LoginModel empty() => const LoginModel(
-    username: '', // Changed from email to username
-    password: '',
-    role: '',
-  );
-}
-

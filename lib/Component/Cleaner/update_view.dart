@@ -15,7 +15,7 @@ class UpdateProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize fields
     nameController.text = controller.userName.value;
-    phoneController.text = controller.userPhone.value;
+    phoneController.text = controller.userName.value;
     addressController.text = controller.userAddress.value;
 
     return Scaffold(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../Controller/Cleaner/profile_controller.dart';
 import '../../Controller/Inspector/user_profile_controller.dart';
+import '../../Controller/login_controller.dart';
 
 class UserProfile extends GetView<IUserProfile> {
   const UserProfile({Key? key}) : super(key: key);
@@ -16,9 +16,7 @@ class UserProfile extends GetView<IUserProfile> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildProfileCard(),
-
             SizedBox(height: 14.4.h),
-
             Padding(
               padding: EdgeInsets.only(left: 14.4.w, bottom: 7.2.h),
               child: Text(
@@ -30,7 +28,6 @@ class UserProfile extends GetView<IUserProfile> {
                 ),
               ),
             ),
-
             _buildMenuOption(
               icon: Icons.list_alt,
               title: 'Assigned Plants',
@@ -41,15 +38,12 @@ class UserProfile extends GetView<IUserProfile> {
               title: ' Plants Info ',
               onTap: controller.goToPlantInfo,
             ),
-
             _buildMenuOption(
               icon: Icons.headset_mic,
               title: 'Help & Support',
               onTap: controller.goToHelpAndSupport,
             ),
-
             SizedBox(height: 14.4.h),
-
             Padding(
               padding: EdgeInsets.only(left: 14.4.w, bottom: 7.2.h),
               child: Text(
@@ -61,16 +55,13 @@ class UserProfile extends GetView<IUserProfile> {
                 ),
               ),
             ),
-
             _buildActionButton(
               icon: Icons.logout,
               title: 'Logout',
               color: Colors.orange,
               onTap: controller.logout,
             ),
-
             SizedBox(height: 5.4.h),
-
             _buildActionButton(
               icon: Icons.delete_outline,
               title: 'Delete Account',
@@ -84,6 +75,7 @@ class UserProfile extends GetView<IUserProfile> {
   }
 
   Widget _buildProfileCard() {
+    final LoginController loginController = Get.find<LoginController>();
     return Container(
       margin: EdgeInsets.all(14.4.w),
       padding: EdgeInsets.all(14.4.w),
@@ -109,9 +101,12 @@ class UserProfile extends GetView<IUserProfile> {
                 color: Colors.grey.shade300,
                 width: 0.9.w,
               ),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/profile_placeholder.png'),
-                fit: BoxFit.cover,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.person, // Dummy profile icon
+                size: 40, // Adjust size as needed
+                color: Colors.grey,
               ),
             ),
           ),
@@ -131,16 +126,16 @@ class UserProfile extends GetView<IUserProfile> {
                     ),
                     SizedBox(width: 3.6.w),
                     Obx(() => Text(
-                          controller.userName.value,
+                          loginController.userName,
                           style: TextStyle(fontSize: 11.sp),
                         )),
                   ],
                 ),
-                SizedBox(height: 3.6.h),
+                SizedBox(height: 9.6.h),
                 Row(
                   children: [
                     Text(
-                      'Phone:',
+                      'userName:',
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.bold,
@@ -148,41 +143,29 @@ class UserProfile extends GetView<IUserProfile> {
                     ),
                     SizedBox(width: 3.6.w),
                     Obx(() => Text(
-                          controller.userPhone.value,
+                          loginController.username,
                           style: TextStyle(fontSize: 11.sp),
                         )),
                   ],
                 ),
-                SizedBox(height: 3.6.h),
                 Row(
                   children: [
                     Text(
-                      'Address:',
+                      'Distributor Name:',
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(width: 3.6.w),
-                    Expanded(
-                      child: Obx(() => Text(
-                            controller.userAddress.value,
-                            style: TextStyle(fontSize: 11.sp),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          )),
-                    ),
+                    Obx(() => Text(
+                          loginController.currentDistributorName.string,
+                          style: TextStyle(fontSize: 11.sp),
+                        )),
                   ],
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.edit_outlined,
-              size: 18.sp,
-            ),
-            onPressed: controller.editProfile,
           ),
         ],
       ),

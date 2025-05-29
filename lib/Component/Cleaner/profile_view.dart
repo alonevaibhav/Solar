@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../Controller/Cleaner/profile_controller.dart';
+import '../../Controller/login_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
@@ -54,21 +57,6 @@ class ProfileView extends GetView<ProfileController> {
               onTap: controller.goToCleanupHistory,
             ),
 
-            // SizedBox(height: 14.4.h),
-            //
-            // Padding(
-            //   padding: EdgeInsets.only(left: 14.4.w, bottom: 7.2.h),
-            //   child: Text(
-            //     'Preference',
-            //     style: TextStyle(
-            //       fontSize: 12.6.sp,
-            //       fontWeight: FontWeight.w500,
-            //       color: Colors.black87,
-            //     ),
-            //   ),
-            // ),
-
-            // _buildThemeToggle(),
             SizedBox(height: 14.4.h),
 
             Padding(
@@ -105,6 +93,8 @@ class ProfileView extends GetView<ProfileController> {
   }
 
   Widget _buildProfileCard() {
+    final LoginController loginController = Get.find<LoginController>();
+
     return Container(
       margin: EdgeInsets.all(14.4.w),
       padding: EdgeInsets.all(14.4.w),
@@ -130,12 +120,16 @@ class ProfileView extends GetView<ProfileController> {
                 color: Colors.grey.shade300,
                 width: 0.9.w,
               ),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/profile_placeholder.png'),
-                fit: BoxFit.cover,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.person, // Dummy profile icon
+                size: 40, // Adjust size as needed
+                color: Colors.grey,
               ),
             ),
           ),
+
           SizedBox(width: 14.4.w),
           Expanded(
             child: Column(
@@ -152,16 +146,18 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     SizedBox(width: 3.6.w),
                     Obx(() => Text(
-                      controller.userName.value,
+                      loginController.currentUserName.isNotEmpty
+                          ? loginController.userName
+                          : 'Loading...',
                       style: TextStyle(fontSize: 11.sp),
                     )),
                   ],
                 ),
-                SizedBox(height: 3.6.h),
+                SizedBox(height: 9.6.h),
                 Row(
                   children: [
                     Text(
-                      'Phone:',
+                      'userName:',
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.bold,
@@ -169,41 +165,33 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     SizedBox(width: 3.6.w),
                     Obx(() => Text(
-                      controller.userPhone.value,
+                      loginController.currentUsername.isNotEmpty
+                          ? loginController.username
+                          : 'Loading...',
                       style: TextStyle(fontSize: 11.sp),
                     )),
                   ],
                 ),
-                SizedBox(height: 3.6.h),
                 Row(
                   children: [
                     Text(
-                      'Address:',
+                      'Distributor Name:',
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(width: 3.6.w),
-                    Expanded(
-                      child: Obx(() => Text(
-                        controller.userAddress.value,
-                        style: TextStyle(fontSize: 11.sp),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      )),
-                    ),
+                    Obx(() => Text(
+                      loginController.currentDistributorName.isNotEmpty
+                          ? loginController.username
+                          : 'Loading...',
+                      style: TextStyle(fontSize: 11.sp),
+                    )),
                   ],
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.edit_outlined,
-              size: 18.sp,
-            ),
-            onPressed: controller.editProfile,
           ),
         ],
       ),
