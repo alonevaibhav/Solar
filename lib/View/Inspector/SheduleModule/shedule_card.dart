@@ -1,45 +1,39 @@
-import 'dart:math';
-
+// widgets/schedule_card_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:solar_app/View/Inspector/SheduleModule/shedule_model.dart';
 
-class InspectionCardWidget extends StatelessWidget {
-  final Map<String, dynamic> inspection;
+class ScheduleCardWidget extends StatelessWidget {
+  final Schedule schedule;
   final VoidCallback? onTap;
 
-  const InspectionCardWidget({
+  const ScheduleCardWidget({
     Key? key,
-    required this.inspection,
+    required this.schedule,
     this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     try {
-      print('Rendering InspectionCard for: ${inspection['id']}');
-      print('Inspection data keys: ${inspection.keys.toList()}');
-
-      // Your existing build logic here...
-
+      return _buildCard(context);
     } catch (e) {
-      print('Error in InspectionCardWidget: $e');
-      print('Inspection data: $inspection');
-
-      // Return a simple error card
       return Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: Colors.red[100],
           borderRadius: BorderRadius.circular(12.r),
         ),
-        child: Text('Error rendering card: $e'),
+        child: Text('Error rendering schedule card: $e'),
       );
     }
+  }
 
+  Widget _buildCard(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -56,16 +50,17 @@ class InspectionCardWidget extends StatelessWidget {
         ),
         child: Column(
           children: [
-            _buildInspectionHeader(),
+            _buildScheduleHeader(),
             SizedBox(height: 12.h),
-            _buildInspectionDetails(),
+            _buildScheduleDetails(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInspectionHeader() {
+
+  Widget _buildScheduleHeader() {
     return Row(
       children: [
         _buildStatusIcon(),
@@ -78,7 +73,7 @@ class InspectionCardWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Inspection ID: ${inspection['id']}',
+                    'Schedule ID: ${schedule.id}',
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
@@ -90,7 +85,7 @@ class InspectionCardWidget extends StatelessWidget {
               ),
               SizedBox(height: 4.h),
               Text(
-                'Plant ID: ${inspection['plant_id']}',
+                'Plant ID: ${schedule.plantId}',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Colors.grey[600],
@@ -139,7 +134,7 @@ class InspectionCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInspectionDetails() {
+  Widget _buildScheduleDetails() {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -153,7 +148,7 @@ class InspectionCardWidget extends StatelessWidget {
           _buildWeekDayRow(),
           SizedBox(height: 8.h),
           _buildInspectorActiveRow(),
-          if (inspection['notes'] != null && inspection['notes'].toString().isNotEmpty) ...[
+          if (schedule.notes != null && schedule.notes!.isNotEmpty && schedule.notes != 'null') ...[
             SizedBox(height: 8.h),
             _buildNotesSection(),
           ],
@@ -169,14 +164,14 @@ class InspectionCardWidget extends StatelessWidget {
           child: _buildDetailItem(
             Icons.calendar_today_outlined,
             'Schedule',
-            _formatScheduleDate(inspection['schedule_date']),
+            _formatScheduleDate(schedule.scheduleDate),
           ),
         ),
         Expanded(
           child: _buildDetailItem(
             Icons.access_time_outlined,
             'Time',
-            _formatTime(inspection['time']),
+            _formatTime(schedule.time),
           ),
         ),
       ],
@@ -190,14 +185,14 @@ class InspectionCardWidget extends StatelessWidget {
           child: _buildDetailItem(
             Icons.view_week_outlined,
             'Week',
-            'Week ${inspection['week']}',
+            'Week ${schedule.week}',
           ),
         ),
         Expanded(
           child: _buildDetailItem(
             Icons.today_outlined,
             'Day',
-            _getDayName(inspection['day']),
+            _getDayName(schedule.day),
           ),
         ),
       ],
@@ -211,14 +206,14 @@ class InspectionCardWidget extends StatelessWidget {
           child: _buildDetailItem(
             Icons.person_outline,
             'Inspector',
-            'ID: ${inspection['inspector_id']}',
+            'ID: ${schedule.inspectorId}',
           ),
         ),
         Expanded(
           child: _buildDetailItem(
-            Icons.toggle_on_outlined,
-            'Active',
-            inspection['isActive'] == 1 ? 'Yes' : 'No',
+            Icons.assignment_ind_outlined,
+            'Assigned By',
+            'ID: ${schedule.assignedBy}',
           ),
         ),
       ],
@@ -257,7 +252,7 @@ class InspectionCardWidget extends StatelessWidget {
           ),
           SizedBox(height: 4.h),
           Text(
-            inspection['notes'].toString(),
+            schedule.notes!,
             style: TextStyle(
               fontSize: 11.sp,
               color: Colors.blue[800],
@@ -277,26 +272,29 @@ class InspectionCardWidget extends StatelessWidget {
           color: Colors.grey[600],
         ),
         SizedBox(width: 4.w),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: Colors.grey[500],
-                fontWeight: FontWeight.w500,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: Colors.grey[500],
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 11.sp,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -304,8 +302,8 @@ class InspectionCardWidget extends StatelessWidget {
 
   // Helper methods for status handling
   Color _getStatusColor() {
-    String? status = inspection['status'];
-    switch (status?.toLowerCase()) {
+    String status = schedule.status.toLowerCase();
+    switch (status) {
       case 'completed':
         return Colors.green;
       case 'in_progress':
@@ -322,8 +320,8 @@ class InspectionCardWidget extends StatelessWidget {
   }
 
   IconData _getStatusIcon() {
-    String? status = inspection['status'];
-    switch (status?.toLowerCase()) {
+    String status = schedule.status.toLowerCase();
+    switch (status) {
       case 'completed':
         return Icons.check_circle_outline;
       case 'in_progress':
@@ -340,16 +338,15 @@ class InspectionCardWidget extends StatelessWidget {
   }
 
   String _capitalizeStatus() {
-    String? status = inspection['status'];
-    if (status == null) return 'Unknown';
-    return status.split('_').map((word) =>
+    if (schedule.status.isEmpty) return 'Pending';
+    return schedule.status.split('_').map((word) =>
     word[0].toUpperCase() + word.substring(1).toLowerCase()
     ).join(' ');
   }
 
   // Helper methods for date/time formatting
-  String _formatScheduleDate(String? dateStr) {
-    if (dateStr == null || dateStr.isEmpty) return 'N/A';
+  String _formatScheduleDate(String dateStr) {
+    if (dateStr.isEmpty) return 'N/A';
     try {
       DateTime date = DateTime.parse(dateStr);
       return '${date.day}/${date.month}/${date.year}';
@@ -359,11 +356,11 @@ class InspectionCardWidget extends StatelessWidget {
     }
   }
 
-  String _formatTime(String? timeStr) {
-    if (timeStr == null || timeStr.isEmpty) return 'N/A';
+  String _formatTime(String timeStr) {
+    if (timeStr.isEmpty) return 'N/A';
     try {
       List<String> parts = timeStr.split(':');
-      if (parts.length < 2) return timeStr; // Return original if not properly formatted
+      if (parts.length < 2) return timeStr;
 
       int hour = int.parse(parts[0]);
       int minute = int.parse(parts[1]);
@@ -378,12 +375,12 @@ class InspectionCardWidget extends StatelessWidget {
       return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
     } catch (e) {
       print('Time parsing error: $e for time: $timeStr');
-      return timeStr ?? 'N/A';
+      return timeStr;
     }
   }
 
-  String _getDayName(String? day) {
-    switch (day?.toLowerCase()) {
+  String _getDayName(String day) {
+    switch (day.toLowerCase()) {
       case 'mo':
         return 'Monday';
       case 'tu':
@@ -399,7 +396,7 @@ class InspectionCardWidget extends StatelessWidget {
       case 'su':
         return 'Sunday';
       default:
-        return day ?? 'N/A';
+        return day.isNotEmpty ? day : 'N/A';
     }
   }
 }

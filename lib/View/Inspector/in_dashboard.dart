@@ -11,6 +11,7 @@ import '../../Controller/Inspector/plant_inspection_controller.dart';
 import '../../Controller/Inspector/ticket_controller.dart';
 import '../../Controller/Inspector/user_profile_controller.dart';
 import '../../utils/exit.dart';
+import 'SheduleModule/shedule_view.dart';
 import 'area_inspection_view.dart';
 import 'bottom_nevigation.dart';
 
@@ -82,7 +83,6 @@ class InspectorTasksTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final TicketController controller = Get.put(TicketController());
 
     return Scaffold(
@@ -96,7 +96,8 @@ class InspectorHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlantInspectionController controller = Get.put(PlantInspectionController());
+    final PlantInspectionController controller =
+        Get.put(PlantInspectionController());
     return Scaffold(
       body: PlantInspectionView(),
     );
@@ -108,13 +109,13 @@ class InspectorAlertsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final AlertsController controller = Get.put(AlertsController());
-
+    // final AlertsController controller = Get.put(AlertsController());
 
     return Scaffold(
-      body: AlertsView()
-    );
+        body:
+
+            // AlertsView()
+            ScheduleContentView());
   }
 }
 
