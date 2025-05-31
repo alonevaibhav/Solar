@@ -27,6 +27,9 @@ String getInspectorPlantsUrl(int inspectorId) => "/api/plant/inspector/$inspecto
 String getAllPlant(int inspectorId) => "/schedules/inspector-schedules/inspector/$inspectorId/weekly";
 
 
+String getTodaySchedule(int inspectorId) => "/schedules/inspector-schedules/today/$inspectorId";
+
+
 
 
 

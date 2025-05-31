@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/View/Inspector/SheduleModule/shedule_card.dart';
-import 'package:solar_app/View/Inspector/SheduleModule/shedule_controller.dart';
-import 'package:solar_app/View/Inspector/SheduleModule/shedule_model.dart';
+import 'package:solar_app/Controller/Inspector/shedule_controller.dart';
+import 'package:solar_app/API%20Service/Model/Request/shedule_model.dart';
 
 class ScheduleContentView extends StatefulWidget {
   const ScheduleContentView({Key? key}) : super(key: key);

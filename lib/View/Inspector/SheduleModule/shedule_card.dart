@@ -1,7 +1,7 @@
 // widgets/schedule_card_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:solar_app/View/Inspector/SheduleModule/shedule_model.dart';
+import 'package:solar_app/API%20Service/Model/Request/shedule_model.dart';
 
 class ScheduleCardWidget extends StatelessWidget {
   final Schedule schedule;

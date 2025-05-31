@@ -1,7 +1,7 @@
 // controllers/schedule_controller.dart
 import 'package:get/get.dart';
-import 'package:solar_app/View/Inspector/SheduleModule/shedule_model.dart';
-import '../../../API Service/api_service.dart';
+import 'package:solar_app/API%20Service/Model/Request/shedule_model.dart';
+import '../../API Service/api_service.dart';
 
 class ScheduleController extends GetxController {
   // Observable state variables
@@ -38,7 +38,6 @@ class ScheduleController extends GetxController {
         throw Exception('User ID not found. Please login again.');
       }
 
-      print('Fetching schedules for inspector: $storedUid');
 
       // Make API call
       final response = await ApiService.get<ScheduleResponse>(
@@ -55,14 +54,11 @@ class ScheduleController extends GetxController {
           _selectedWeek.value = availableWeeks.first;
         }
 
-        print('Successfully fetched ${allSchedules.length} schedules');
-        print('Available weeks: $availableWeeks');
       } else {
         throw Exception(response.errorMessage ?? 'Failed to fetch schedules');
       }
     } catch (e) {
       _setError('Error fetching schedules: ${e.toString()}');
-      print('Error in fetchInspectorSchedules: $e');
     } finally {
       _setLoading(false);
     }

@@ -1,256 +1,259 @@
-//
-//
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import '../../API Service/api_service.dart';
-// import '../../Model/Inspector/all_inspection_model.dart';
+// import 'all_inspection_controller.dart';
 //
 // class PlantInspectionController extends GetxController {
-//   final isLoading = false.obs;
-//   final errorMessage = Rxn<String>();
+//   final AllInspectionsController allInspectionsController = Get.put(AllInspectionsController());
+//
+//   final isLoadingDashboard = false.obs;
+//   final errorMessageDashboard = Rxn();
 //   final dashboardData = Rxn<Map<String, dynamic>>();
 //   final todaysInspections = Rxn<Map<String, dynamic>>();
-//   final activeAlerts = Rxn<Map<String, dynamic>>();
-//   final todaysTickets = Rxn<Map<String, dynamic>>();
-//   final allInspection = <Map<String, dynamic>>[].obs;
-//   final filteredInspections = <Map<String, dynamic>>[].obs;
 //   final inspectionItems = <Map<String, dynamic>>[].obs;
 //   final selectedTabIndex = 0.obs;
-//   final selectedWeekFilter = Rxn<String>();
-//   final originalInspections = <Map<String, dynamic>>[];
 //
 //   @override
 //   void onInit() {
 //     super.onInit();
-//     fetchDashboardData();
+//     fetchInspectionItems();
 //   }
 //
 //   @override
 //   void onReady() {
 //     super.onReady();
-//     fetchInspectionItems();
-//     fetchAllInspections();
 //   }
 //
-//   Future<void> fetchDashboardData() async {
-//     try {
-//       isLoading.value = true;
-//       await Future.delayed(const Duration(seconds: 1));
-//
-//       final response = {
-//         'todaysInspections': {
-//           'count': 10,
-//           'status': {'complete': 10, 'cleaning': 90, 'pending': 40},
-//           'statusColors': {
-//             'complete': Colors.blue,
-//             'cleaning': Colors.orange,
-//             'pending': Colors.pink
-//           }
+//   // Calculate dashboard statistics from inspection items
+//   void _calculateDashboardStats() {
+//     if (inspectionItems.isEmpty) {
+//       todaysInspections.value = {
+//         'count': 0,
+//         'status': {
+//           'complete': 0,
+//           'pending': 0
 //         },
-//         'activeAlerts': {
-//           'count': 32,
-//           'status': {'priority': 45, 'medium': 30, 'minor': 25}
-//         },
-//         'todaysTickets': {
-//           'open': 24,
-//           'openPercentage': 57,
-//           'closed': 18,
-//           'closedPercentage': 43,
-//           'ticketsByPriority': {
-//             'high': [12, 10, 8, 11],
-//             'medium': [6, 8, 9, 7]
-//           }
-//         },
-//         'ticketCategories': {
-//           'percentages': [25, 35, 25, 15]
-//         }
 //       };
-//
-//       dashboardData.value = response;
-//       todaysInspections.value = response['todaysInspections'];
-//       activeAlerts.value = response['activeAlerts'];
-//       todaysTickets.value = response['todaysTickets'];
-//     } catch (e) {
-//       errorMessage.value = e.toString();
-//       Get.snackbar('Error', 'Failed to load dashboard data');
-//     } finally {
-//       isLoading.value = false;
+//       dashboardData.value = {
+//         'todaysInspections': todaysInspections.value,
+//       };
+//       return;
 //     }
+//
+//     // Count inspections by status
+//     int completedCount = 0;
+//     int pendingCount = 0;
+//
+//     for (var item in inspectionItems) {
+//       String status = item['status']?.toString().toLowerCase() ?? '';
+//       switch (status) {
+//         case 'completed':
+//           completedCount++;
+//           break;
+//         case 'pending':
+//           pendingCount++;
+//           break;
+//       }
+//     }
+//
+//     // Update dashboard data
+//     todaysInspections.value = {
+//       'count': inspectionItems.length,
+//       'status': {
+//         'complete': completedCount,
+//         'pending': pendingCount,
+//       },
+//     };
+//
+//     dashboardData.value = {
+//       'todaysInspections': todaysInspections.value,
+//     };
 //   }
 //
 //   Future<void> fetchInspectionItems() async {
 //     try {
-//       isLoading.value = true;
+//       isLoadingDashboard.value = true;
 //       await Future.delayed(const Duration(seconds: 1));
 //
-//       final items = [
-//         {
-//           'plantName': 'Momo Plant',
-//           'location': 'XYZ-1, Pune Maharashtra(12345)',
-//           'progress': 1.0,
-//           'status': 'completed',
-//           'color': 0xFFFF5252,
-//         },
-//         {
-//           'plantName': 'Abc Plant',
-//           'location': 'XYZ-1, Pune Maharashtra(12345)',
-//           'progress': 0.7,
-//           'status': 'in_progress',
-//           'color': 0xFFFF5252,
-//         },
-//         {
-//           'plantName': 'Abc Plant',
-//           'location': 'XYZ-1, Pune Maharashtra(12345)',
-//           'progress': 0.3,
-//           'eta': '30m',
-//           'status': 'pending',
-//           'color': 0xFFFFC107,
-//         },
-//       ];
+//       // Updated API data with only completed and pending statuses
+//       final apiResponse = {
+//         "message": "Today's schedules retrieved successfully",
+//         "success": true,
+//         "data": [
+//           {
+//             "id": 25,
+//             "plant_id": 25,
+//             "inspector_id": 8,
+//             "week": "1",
+//             "day": "fr",
+//             "time": "09:00:00",
+//             "isActive": 1,
+//             "assignedBy": 28,
+//             "schedule_date": "2025-05-29T18:30:00.000Z",
+//             "status": "completed",
+//             "notes": null,
+//             "inspector_name": "John Doe",
+//             "plant_name": "Sunflower Plant",
+//             "plant_address": "123 Sunflower Street",
+//             "plant_location": "Building A, Floor 1",
+//             "total_panels": 10,
+//             "capacity_w": 5.5,
+//             "area_squrM": 200,
+//             "latlng": null,
+//             "plant_isActive": 0,
+//             "plant_isDeleted": 0,
+//             "cleaner_name": "Alice Smith",
+//             "state_name": "Maharashtra",
+//             "distributor_name": null,
+//             "taluka_name": "Pune City",
+//             "area_name": "Baner"
+//           },
+//           {
+//             "id": 26,
+//             "plant_id": 26,
+//             "inspector_id": 9,
+//             "week": "1",
+//             "day": "sa",
+//             "time": "10:30:00",
+//             "isActive": 1,
+//             "assignedBy": 28,
+//             "schedule_date": "2025-05-30T18:30:00.000Z",
+//             "status": "pending",
+//             "notes": "Equipment check required",
+//             "inspector_name": "Jane Smith",
+//             "plant_name": "Rose Garden Plant",
+//             "plant_address": "456 Rose Avenue",
+//             "plant_location": "Building B, Floor 2",
+//             "total_panels": 15,
+//             "capacity_w": 8.2,
+//             "area_squrM": 350,
+//             "latlng": null,
+//             "plant_isActive": 1,
+//             "plant_isDeleted": 0,
+//             "cleaner_name": "Bob Johnson",
+//             "state_name": "Maharashtra",
+//             "distributor_name": "Green Energy Co.",
+//             "taluka_name": "Pune City",
+//             "area_name": "Kothrud"
+//           },
+//           {
+//             "id": 27,
+//             "plant_id": 27,
+//             "inspector_id": 10,
+//             "week": "1",
+//             "day": "su",
+//             "time": "08:00:00",
+//             "isActive": 1,
+//             "assignedBy": 28,
+//             "schedule_date": "2025-05-31T18:30:00.000Z",
+//             "status": "pending",
+//             "notes": null,
+//             "inspector_name": "Mike Wilson",
+//             "plant_name": "Lotus Power Plant",
+//             "plant_address": "789 Lotus Street",
+//             "plant_location": "Building C, Floor 3",
+//             "total_panels": 20,
+//             "capacity_w": 12.5,
+//             "area_squrM": 500,
+//             "latlng": null,
+//             "plant_isActive": 1,
+//             "plant_isDeleted": 0,
+//             "cleaner_name": "Carol Davis",
+//             "state_name": "Maharashtra",
+//             "distributor_name": "Solar Solutions Ltd.",
+//             "taluka_name": "Pune City",
+//             "area_name": "Hinjewadi"
+//           },
+//           {
+//             "id": 28,
+//             "plant_id": 28,
+//             "inspector_id": 11,
+//             "week": "1",
+//             "day": "mo",
+//             "time": "11:00:00",
+//             "isActive": 1,
+//             "assignedBy": 28,
+//             "schedule_date": "2025-06-01T18:30:00.000Z",
+//             "status": "completed",
+//             "notes": "Regular maintenance completed",
+//             "inspector_name": "Sarah Johnson",
+//             "plant_name": "Orchid Solar Farm",
+//             "plant_address": "321 Green Valley Road",
+//             "plant_location": "Building D, Ground Floor",
+//             "total_panels": 25,
+//             "capacity_w": 15.0,
+//             "area_squrM": 600,
+//             "latlng": null,
+//             "plant_isActive": 1,
+//             "plant_isDeleted": 0,
+//             "cleaner_name": "David Brown",
+//             "state_name": "Maharashtra",
+//             "distributor_name": "Eco Power Systems",
+//             "taluka_name": "Pune City",
+//             "area_name": "Wakad"
+//           }
+//         ],
+//         "errors": []
+//       };
 //
-//       inspectionItems.value = items;
+//       if (apiResponse['success'] == true && apiResponse['data'] != null) {
+//         final data = apiResponse['data'] as List<dynamic>;
+//         inspectionItems.value = data.map((item) => Map<String, dynamic>.from(item as Map)).toList();
 //
-//       final tickets = [
-//         {
-//           'id': 'T001',
-//           'title': 'Machine Maintenance',
-//           'priority': 'high',
-//           'status': 'pending'
-//         },
-//         {
-//           'id': 'T002',
-//           'title': 'Safety Check',
-//           'priority': 'medium',
-//           'status': 'pending'
-//         }
-//       ];
-//
-//       allInspection.value = tickets;
+//         // Calculate dashboard statistics after fetching inspection items
+//         _calculateDashboardStats();
+//       }
 //     } catch (e) {
-//       errorMessage.value = e.toString();
 //       Get.snackbar('Error', 'Failed to load inspection items');
 //     } finally {
-//       isLoading.value = false;
+//       isLoadingDashboard.value = false;
 //     }
-//   }
-//
-//   Future<void> fetchAllInspections() async {
-//     try {
-//       isLoading.value = true;
-//
-//       final storedUid = await ApiService.getUid();
-//       if (storedUid == null) {
-//         throw Exception('User ID not found');
-//       }
-//
-//       final response = await ApiService.get<InspectionResponse>(
-//         endpoint: '/schedules/inspector-schedules/inspector/$storedUid/weekly',
-//         fromJson: (json) => InspectionResponse.fromJson(json),
-//       );
-//
-//       if (response.success && response.data != null) {
-//         final data = response.data!.data;
-//
-//         List<Map<String, dynamic>> flattenedInspections = [];
-//
-//         // FIXED: Remove .take(3) to get ALL inspections from each week
-//         if (data.containsKey('Week 1')) {
-//           flattenedInspections.addAll(
-//             data['Week 1']!.map((inspection) => inspection.toJson()),
-//           );
-//         }
-//
-//         if (data.containsKey('Week 2')) {
-//           flattenedInspections.addAll(
-//             data['Week 2']!.map((inspection) => inspection.toJson()),
-//           );
-//         }
-//
-//         // If you have more weeks, add them here
-//         if (data.containsKey('Week 3')) {
-//           flattenedInspections.addAll(
-//             data['Week 3']!.map((inspection) => inspection.toJson()),
-//           );
-//         }
-//
-//         if (data.containsKey('Week 4')) {
-//           flattenedInspections.addAll(
-//             data['Week 4']!.map((inspection) => inspection.toJson()),
-//           );
-//         }
-//
-//         // Alternative approach: Dynamically handle all weeks
-//         // data.forEach((weekKey, weekInspections) {
-//         //   flattenedInspections.addAll(
-//         //     weekInspections.map((inspection) => inspection.toJson()),
-//         //   );
-//         // });
-//
-//         originalInspections.clear();
-//         originalInspections.addAll(flattenedInspections);
-//
-//         allInspection.value = flattenedInspections;
-//         filteredInspections.value = flattenedInspections;
-//
-//         print('Total inspections loaded: ${flattenedInspections.length}');
-//         print('Week 1 count: ${data['Week 1']?.length ?? 0}');
-//         print('Week 2 count: ${data['Week 2']?.length ?? 0}');
-//       } else {
-//         throw Exception(response.errorMessage ?? 'Failed to load inspection items');
-//       }
-//     } catch (e) {
-//       errorMessage.value = e.toString();
-//       Get.snackbar('Error', 'Failed to load inspection items');
-//     } finally {
-//       isLoading.value = false;
-//     }
-//   }
-//
-//   void filterByWeek(String? week) {
-//     selectedWeekFilter.value = week;
-//
-//     if (week == null) {
-//       filteredInspections.value = List.from(originalInspections);
-//       allInspection.value = List.from(originalInspections);
-//     } else {
-//       final filtered = originalInspections.where((inspection) =>
-//       inspection['week'].toString() == week).toList();
-//
-//       filteredInspections.value = filtered;
-//       allInspection.value = filtered;
-//     }
-//   }
-//
-//   String get currentFilterText {
-//     return selectedWeekFilter.value == null ? 'All Weeks' : 'Week ${selectedWeekFilter.value}';
-//   }
-//
-//   bool isWeekFilterActive(String week) {
-//     return selectedWeekFilter.value == week;
-//   }
-//
-//   bool get isAllFilterActive {
-//     return selectedWeekFilter.value == null;
 //   }
 //
 //   void changeTab(int index) {
 //     selectedTabIndex.value = index;
 //   }
 //
-//   void navigateToInspectionDetails(int index) {
-//     Get.toNamed('/inspection-details', arguments: inspectionItems[index]);
+//   void navigateToInspectionDetails(Map<String, dynamic> item) {
+//     Get.toNamed('/inspection-details', arguments: item);
 //   }
 //
 //   Future<void> refreshDashboard() async {
-//     await fetchDashboardData();
 //     await fetchInspectionItems();
-//     await fetchAllInspections();
+//     await allInspectionsController.fetchAllInspections();
 //     Get.snackbar('Success', 'Dashboard refreshed successfully');
 //   }
+//
+//   Color getStatusColor(String status) {
+//     switch (status.toLowerCase()) {
+//       case 'completed':
+//         return const Color(0xFF48BB78); // Professional green
+//       case 'pending':
+//         return const Color(0xFFA0AEC0); // Professional grey
+//       default:
+//         return const Color(0xFFA0AEC0); // Light grey
+//     }
+//   }
+//
+//   String getStatusDisplayText(String status) {
+//     switch (status.toLowerCase()) {
+//       case 'completed':
+//         return 'Completed';
+//       case 'pending':
+//         return 'Pending';
+//       default:
+//         return 'Unknown';
+//     }
+//   }
 // }
+//
+// // /------------------------------------------///
+
+
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../API Service/api_service.dart';
+import '../../utils/constants.dart';
 import 'all_inspection_controller.dart';
 
 class PlantInspectionController extends GetxController {
@@ -260,101 +263,92 @@ class PlantInspectionController extends GetxController {
   final errorMessageDashboard = Rxn<String>();
   final dashboardData = Rxn<Map<String, dynamic>>();
   final todaysInspections = Rxn<Map<String, dynamic>>();
-  final activeAlerts = Rxn<Map<String, dynamic>>();
-  final todaysTickets = Rxn<Map<String, dynamic>>();
   final inspectionItems = <Map<String, dynamic>>[].obs;
   final selectedTabIndex = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchDashboardData();
+    fetchInspectionItems();
   }
 
   @override
   void onReady() {
     super.onReady();
-    fetchInspectionItems();
   }
 
-  Future<void> fetchDashboardData() async {
-    try {
-      isLoadingDashboard.value = true;
-      await Future.delayed(const Duration(seconds: 1));
-
-      final response = {
-        'todaysInspections': {
-          'count': 10,
-          'status': {'complete': 10, 'cleaning': 90, 'pending': 40},
-          'statusColors': {
-            'complete': Colors.blue,
-            'cleaning': Colors.orange,
-            'pending': Colors.pink
-          }
+  void _calculateDashboardStats() {
+    if (inspectionItems.isEmpty) {
+      todaysInspections.value = {
+        'count': 0,
+        'status': {
+          'complete': 0,
+          'pending': 0
         },
-        'activeAlerts': {
-          'count': 32,
-          'status': {'priority': 45, 'medium': 30, 'minor': 25}
-        },
-        'todaysTickets': {
-          'open': 24,
-          'openPercentage': 57,
-          'closed': 18,
-          'closedPercentage': 43,
-          'ticketsByPriority': {
-            'high': [12, 10, 8, 11],
-            'medium': [6, 8, 9, 7]
-          }
-        },
-        'ticketCategories': {
-          'percentages': [25, 35, 25, 15]
-        }
       };
-
-      dashboardData.value = response;
-      todaysInspections.value = response['todaysInspections'];
-      activeAlerts.value = response['activeAlerts'];
-      todaysTickets.value = response['todaysTickets'];
-    } catch (e) {
-      errorMessageDashboard.value = e.toString();
-      Get.snackbar('Error', 'Failed to load dashboard data');
-    } finally {
-      isLoadingDashboard.value = false;
+      dashboardData.value = {
+        'todaysInspections': todaysInspections.value,
+      };
+      return;
     }
+
+    int completedCount = 0;
+    int pendingCount = 0;
+
+    for (var item in inspectionItems) {
+      String status = item['status']?.toString().toLowerCase() ?? '';
+      switch (status) {
+        case 'completed':
+          completedCount++;
+          break;
+        case 'pending':
+          pendingCount++;
+          break;
+      }
+    }
+
+    todaysInspections.value = {
+      'count': inspectionItems.length,
+      'status': {
+        'complete': completedCount,
+        'pending': pendingCount,
+      },
+    };
+
+    dashboardData.value = {
+      'todaysInspections': todaysInspections.value,
+    };
   }
 
   Future<void> fetchInspectionItems() async {
     try {
       isLoadingDashboard.value = true;
-      await Future.delayed(const Duration(seconds: 1));
 
-      final items = [
-        {
-          'plantName': 'Momo Plant',
-          'location': 'XYZ-1, Pune Maharashtra(12345)',
-          'progress': 1.0,
-          'status': 'completed',
-          'color': 0xFFFF5252,
-        },
-        {
-          'plantName': 'Abc Plant',
-          'location': 'XYZ-1, Pune Maharashtra(12345)',
-          'progress': 0.7,
-          'status': 'in_progress',
-          'color': 0xFFFF5252,
-        },
-        {
-          'plantName': 'Abc Plant',
-          'location': 'XYZ-1, Pune Maharashtra(12345)',
-          'progress': 0.3,
-          'eta': '30m',
-          'status': 'pending',
-          'color': 0xFFFFC107,
-        },
-      ];
+      // Fetch the UID from SharedPreferences
+      String? uid = await ApiService.getUid();
 
-      inspectionItems.value = items;
+      if (uid == null) {
+        errorMessageDashboard.value = 'User ID not found';
+        return;
+      }
+
+      // Make the API call to fetch inspection items
+      final response = await ApiService.get<Map<String, dynamic>>(
+        endpoint: getTodaySchedule(int.parse(uid)),
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+
+      if (response.success && response.data != null) {
+        final data = response.data!['data'] as List<dynamic>;
+        inspectionItems.value = data.map((item) => Map<String, dynamic>.from(item as Map)).toList();
+
+        // Calculate dashboard statistics after fetching inspection items
+        _calculateDashboardStats();
+      } else {
+        errorMessageDashboard.value = response.errorMessage ?? 'Failed to load inspection items';
+      }
     } catch (e) {
+      errorMessageDashboard.value = 'Failed to load inspection items: $e';
       Get.snackbar('Error', 'Failed to load inspection items');
     } finally {
       isLoadingDashboard.value = false;
@@ -365,18 +359,35 @@ class PlantInspectionController extends GetxController {
     selectedTabIndex.value = index;
   }
 
-  void navigateToInspectionDetails(int index) {
-    if (index >= 0 && index < inspectionItems.length) {
-      Get.toNamed('/inspection-details', arguments: inspectionItems[index]);
-    } else {
-      Get.snackbar('Error', 'Invalid inspection item selected');
-    }
+  void navigateToInspectionDetails(Map<String, dynamic> item) {
+    Get.toNamed('/inspection-details', arguments: item);
   }
 
   Future<void> refreshDashboard() async {
-    await fetchDashboardData();
     await fetchInspectionItems();
     await allInspectionsController.fetchAllInspections();
     Get.snackbar('Success', 'Dashboard refreshed successfully');
+  }
+
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return const Color(0xFF48BB78); // Professional green
+      case 'pending':
+        return const Color(0xFFA0AEC0); // Professional grey
+      default:
+        return const Color(0xFFA0AEC0); // Light grey
+    }
+  }
+
+  String getStatusDisplayText(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return 'Completed';
+      case 'pending':
+        return 'Pending';
+      default:
+        return 'Unknown';
+    }
   }
 }
