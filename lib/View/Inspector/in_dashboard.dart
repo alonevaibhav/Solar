@@ -1,3 +1,6 @@
+
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/View/Inspector/plant_inspection_view.dart';
@@ -37,26 +40,17 @@ class _InDashboardState extends State<InDashboard> {
   Widget build(BuildContext context) {
     return DoubleBackToExit(
       child: Scaffold(
-        body: Stack(
-          children: [
-            // Main content
-            _pages[_currentIndex],
+        // Remove Stack and Positioned - just use body directly
+        body: _pages[_currentIndex],
 
-            // Floating bottom navigation
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: InspectorBottomNavigation(
-                currentIndex: _currentIndex,
-                onTap: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-              ),
-            ),
-          ],
+        // Move bottom navigation to bottomNavigationBar property
+        bottomNavigationBar: InspectorBottomNavigation(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
         ),
       ),
     );
@@ -70,7 +64,7 @@ class InspectorReportsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AreaInspectionController controller =
-        Get.put(AreaInspectionController());
+    Get.put(AreaInspectionController());
 
     return Scaffold(
       body: AreaInspectionView(),
@@ -96,8 +90,7 @@ class InspectorHomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlantInspectionController controller =
-        Get.put(PlantInspectionController());
+    final PlantInspectionController controller = Get.put(PlantInspectionController());
     return Scaffold(
       body: PlantInspectionView(),
     );
@@ -114,8 +107,8 @@ class InspectorAlertsTab extends StatelessWidget {
     return Scaffold(
         body:
 
-            // AlertsView()
-            ScheduleContentView());
+        // AlertsView()
+        ScheduleContentView());
   }
 }
 
