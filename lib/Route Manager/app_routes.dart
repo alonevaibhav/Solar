@@ -16,6 +16,8 @@ import '../Component/Inspector/TicketPage/ticket_view.dart';
 import '../Component/Inspector/plant_details_view.dart';
 import '../View/Auth/login_page.dart';
 import '../View/Cleaner/c_dashboard.dart';
+import '../View/Cleaner/todays_task/cleanup_schedule_view.dart';
+import '../View/Cleaner/todays_task/task_details_view.dart';
 import '../View/Inspector/assigned_plant_view.dart';
 import '../View/Inspector/in_dashboard.dart';
 import '../View/Inspector/user_profile.dart';
@@ -38,6 +40,9 @@ class AppRoutes {
   static const cleanerCleanupHistory = '/cleaner/cleanerCleanupHistory';
   static const cleanerPlantInfo = '/cleaner/cleanerPlantInfo';
   static const cleanerPlantInfoDetailsPage = '/cleaner/cleanerPlantInfoDetailsPage';
+
+
+  static const cleanerNew = '/cleaner/cleanerNew';
 
   // Inspector routes
 
@@ -110,6 +115,11 @@ class AppRoutes {
     GetPage(
       name: cleanerPlantInfoDetailsPage,
       page: () => CleanerDetailsPage(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: cleanerNew,
+      page: () => TaskDetailsView(),
       binding: AppBindings(),
     ),
 

@@ -228,7 +228,7 @@ class TodayInspectionsController extends GetxController {
   // Start a timer for ongoing tasks
   void _startTimer() {
     _timer?.cancel();
-    remainingMinutes.value = 100; // Reset timer
+    remainingMinutes.value = 55; // Reset timer
 
     _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
       if (remainingMinutes.value > 0) {

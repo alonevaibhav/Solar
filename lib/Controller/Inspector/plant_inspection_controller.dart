@@ -136,7 +136,7 @@ class PlantInspectionController extends GetxController {
 
       // Make the API call to fetch inspection items
       final response = await ApiService.get<Map<String, dynamic>>(
-        endpoint: getTodaySchedule(int.parse(uid)),
+        endpoint: getTodayScheduleInspector(int.parse(uid)),
         fromJson: (json) => json as Map<String, dynamic>,
       );
 

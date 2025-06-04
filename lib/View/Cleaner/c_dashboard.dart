@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:solar_app/View/Cleaner/todays_task/cleanup_schedule_controller.dart';
+import 'package:solar_app/View/Cleaner/todays_task/cleanup_schedule_view.dart';
 import '../../Component/Cleaner/profile_view.dart';
 import '../../Component/Cleaner/today_inspections_view.dart';
 import '../../Controller/Cleaner/profile_controller.dart';
@@ -59,10 +61,12 @@ class CleanerHomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final TodayInspectionsController controller = Get.put(TodayInspectionsController());
+    // final TodayInspectionsController controller = Get.put(TodayInspectionsController());
+    final CleanupScheduleController controller = Get.put(CleanupScheduleController());
 
     return Scaffold(
-      body: TodayInspectionsView(),
+      // body: TodayInspectionsView(),
+      body: CleanupScheduleView(),
     );
   }
 }

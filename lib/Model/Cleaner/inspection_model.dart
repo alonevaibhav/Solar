@@ -1,5 +1,3 @@
-
-
 class InspectionModel {
   final String id;
   final String plantName;
