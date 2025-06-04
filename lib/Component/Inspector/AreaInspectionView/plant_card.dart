@@ -87,12 +87,6 @@ class PlantCardWidget extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          // onTap: () {
-          //   Get.toNamed(
-          //    AppRoutes.inspectorPlantCard ,
-          //     arguments: {'plantId': plant['id']},
-          //   );
-          // },
 
           onTap: () {
             // Navigate to detail screen

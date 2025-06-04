@@ -10,6 +10,7 @@ import '../Component/Inspector/AlertsView/alerts_view.dart';
 import '../Component/Inspector/AreaInspectionView/area_history.dart';
 import '../Component/Inspector/PlantInfo/plant _info.dart';
 import '../Component/Inspector/PlantInfo/plant_details_view.dart';
+import '../Component/Inspector/StartInspection/start_inspection.dart';
 import '../Component/Inspector/TicketPage/ticket_detail_view.dart';
 import '../Component/Inspector/TicketPage/ticket_view.dart';
 import '../Component/Inspector/plant_details_view.dart';
@@ -51,9 +52,14 @@ class AppRoutes {
   static const inspectorAlertView = '/inspector/inspectorAlertView';
   static const inspectorDetailsSection = '/inspector/inspectorDetailsSection';
   static const inspectorPlantInfo = '/inspector/inspectorPlantInfo';
+  static const inspectorStartInspection = '/inspector/inspectorStartInspection';
 
   // All of your pages
   static final routes = <GetPage>[
+
+
+    ///------------------- Cleaner Routes -------------------///
+
     GetPage(
       name: login,
       page: () => const LoginView(),
@@ -110,15 +116,7 @@ class AppRoutes {
 
 
 
-
-
-
-
-
-
-
-
-    // Inspector routes
+    ///------------------- Inspector Routes -------------------///
     GetPage(
       name: inspector,
       page: () => InDashboard(),
@@ -170,6 +168,11 @@ class AppRoutes {
     GetPage(
       name: inspectorAlertView,
       page: () => AlertsView(),
+      binding: AppBindings(),
+    ),
+    GetPage(
+      name: inspectorStartInspection,
+      page: () => StartInspection(),
       binding: AppBindings(),
     ),
   ];

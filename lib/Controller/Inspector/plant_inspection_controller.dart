@@ -1,7 +1,9 @@
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../API Service/api_service.dart';
+import '../../Route Manager/app_routes.dart';
 import '../../utils/constants.dart';
 import 'all_inspection_controller.dart';
 
@@ -15,15 +17,66 @@ class PlantInspectionController extends GetxController {
   final inspectionItems = <Map<String, dynamic>>[].obs;
   final selectedTabIndex = 0.obs;
 
+  // Form state variables - these will be unique per instance
+  late final TextEditingController dateController;
+  late final TextEditingController timeController;
+  late final TextEditingController inspectorReviewController;
+  late final TextEditingController clientReviewController;
+  late final GlobalKey<FormState> formKey;
+  final selectedStatus = 'pending'.obs;
+  final isSubmitting = false.obs;
+
+  // Changed from single image to multiple images
+  final uploadedImagePaths = <String>[].obs;
+  final isUploadingImage = false.obs;
+  final uploadedImagePath = Rxn<String>();
+
+
+  final statusOptions = ['pending', 'cleaning', 'done', 'failed'];
+
   @override
   void onInit() {
     super.onInit();
-    fetchInspectionItems();
+
+    // Initialize controllers in onInit to ensure unique instances
+    dateController = TextEditingController();
+    timeController = TextEditingController();
+    inspectorReviewController = TextEditingController();
+    clientReviewController = TextEditingController();
+    formKey = GlobalKey<FormState>();
+
+    // Set initial values
+    _resetFormData();
+
+    // Only fetch inspection items for dashboard instances (not form instances)
+    if (Get.currentRoute.contains('dashboard') || Get.currentRoute.contains('inspection_list')) {
+      fetchInspectionItems();
+    }
   }
 
   @override
   void onReady() {
     super.onReady();
+  }
+
+  @override
+  void onClose() {
+    // Dispose controllers to prevent memory leaks
+    dateController.dispose();
+    timeController.dispose();
+    inspectorReviewController.dispose();
+    clientReviewController.dispose();
+    super.onClose();
+  }
+
+  // Reset form data to initial state
+  void _resetFormData() {
+    dateController.text = DateTime.now().toString().split(' ')[0];
+    timeController.text = TimeOfDay.now().format(Get.context!);
+    selectedStatus.value = 'pending';
+    uploadedImagePaths.clear(); // Clear the list instead of setting to null
+    inspectorReviewController.clear();
+    clientReviewController.clear();
   }
 
   void _calculateDashboardStats() {
@@ -109,7 +162,7 @@ class PlantInspectionController extends GetxController {
   }
 
   void navigateToInspectionDetails(Map<String, dynamic> item) {
-    Get.toNamed('/inspection-details', arguments: item);
+    Get.toNamed(AppRoutes.inspectorStartInspection, arguments: item);
   }
 
   Future<void> refreshDashboard() async {
@@ -137,6 +190,222 @@ class PlantInspectionController extends GetxController {
         return 'Pending';
       default:
         return 'Unknown';
+    }
+  }
+
+  void _showImageSourceDialog() {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Select Image Source',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: Colors.blue),
+              title: Text('Camera'),
+              subtitle: Text('Take a new photo'),
+              onTap: () {
+                Get.back();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library, color: Colors.green),
+              title: Text('Gallery'),
+              subtitle: Text('Choose from gallery'),
+              onTap: () {
+                Get.back();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library_outlined, color: Colors.orange),
+              title: Text('Multiple from Gallery'),
+              subtitle: Text('Choose multiple photos'),
+              onTap: () {
+                Get.back();
+                _pickMultipleImages();
+              },
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      isUploadingImage.value = true;
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 1800,
+        maxHeight: 1800,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        uploadedImagePaths.add(image.path);
+        Get.snackbar(
+          'Success',
+          'Photo added successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick image: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isUploadingImage.value = false;
+    }
+  }
+
+  Future<void> _pickMultipleImages() async {
+    try {
+      isUploadingImage.value = true;
+      final ImagePicker picker = ImagePicker();
+      final List<XFile> images = await picker.pickMultiImage(
+        maxWidth: 1800,
+        maxHeight: 1800,
+        imageQuality: 85,
+      );
+
+      if (images.isNotEmpty) {
+        for (XFile image in images) {
+          uploadedImagePaths.add(image.path);
+        }
+        Get.snackbar(
+          'Success',
+          '${images.length} photos added successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick images: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isUploadingImage.value = false;
+    }
+  }
+
+  void uploadImage() {
+    _showImageSourceDialog();
+  }
+
+  void removeImage(int index) {
+    if (index >= 0 && index < uploadedImagePaths.length) {
+      uploadedImagePaths.removeAt(index);
+      Get.snackbar(
+        'Success',
+        'Photo removed successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: Duration(seconds: 1),
+      );
+    }
+  }
+
+  void viewImageFullScreen(String imagePath) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.file(
+                  File(imagePath),
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                onPressed: () => Get.back(),
+                icon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> submitInspectionReport(Map<String, dynamic> inspectionData) async {
+    if (formKey.currentState!.validate()) {
+      isSubmitting.value = true;
+      try {
+        // Here you would typically make an API call to submit the inspection report
+        // You can access all uploaded images via uploadedImagePaths.value
+        print('Submitting with ${uploadedImagePaths.length} images');
+
+        // For now, we'll just simulate a delay
+        await Future.delayed(const Duration(seconds: 2));
+
+        Get.snackbar(
+          'Success',
+          'Inspection report submitted successfully with ${uploadedImagePaths.length} photos',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+
+        // Navigate back or to another screen as needed
+        Get.back();
+      } catch (e) {
+        Get.snackbar(
+          'Error',
+          'Failed to submit inspection report: $e',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } finally {
+        isSubmitting.value = false;
+      }
     }
   }
 }

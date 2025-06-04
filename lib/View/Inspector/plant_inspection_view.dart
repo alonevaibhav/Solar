@@ -10,7 +10,8 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // Professional light grey background
+      backgroundColor:
+          const Color(0xFFF8F9FA), // Professional light grey background
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -64,104 +65,105 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
       ),
       body: Obx(() => controller.isLoadingDashboard.value
           ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF718096)),
-            ),
-            SizedBox(height: 14.4.h),
-            Text(
-              'Loading inspection data...',
-              style: TextStyle(
-                fontSize: 14.4.sp,
-                color: const Color(0xFF718096),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(const Color(0xFF718096)),
+                  ),
+                  SizedBox(height: 14.4.h),
+                  Text(
+                    'Loading inspection data...',
+                    style: TextStyle(
+                      fontSize: 14.4.sp,
+                      color: const Color(0xFF718096),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      )
+            )
           : controller.errorMessageDashboard.value != null
-          ? Center(
-        child: Container(
-          margin: EdgeInsets.all(18.0.w),
-          padding: EdgeInsets.all(21.6.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14.4.r),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFE2E8F0),
-                blurRadius: 9.0,
-                offset: const Offset(0, 3.6),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 57.6.sp,
-                color: const Color(0xFFF56565), // Professional red
-              ),
-              SizedBox(height: 14.4.h),
-              Text(
-                'Something went wrong',
-                style: TextStyle(
-                  fontSize: 16.2.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2D3748),
-                ),
-              ),
-              SizedBox(height: 7.2.h),
-              Text(
-                controller.errorMessageDashboard.value.toString(),
-                style: TextStyle(
-                  fontSize: 12.6.sp,
+              ? Center(
+                  child: Container(
+                    margin: EdgeInsets.all(18.0.w),
+                    padding: EdgeInsets.all(21.6.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14.4.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFE2E8F0),
+                          blurRadius: 9.0,
+                          offset: const Offset(0, 3.6),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 57.6.sp,
+                          color: const Color(0xFFF56565), // Professional red
+                        ),
+                        SizedBox(height: 14.4.h),
+                        Text(
+                          'Something went wrong',
+                          style: TextStyle(
+                            fontSize: 16.2.sp,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF2D3748),
+                          ),
+                        ),
+                        SizedBox(height: 7.2.h),
+                        Text(
+                          controller.errorMessageDashboard.value.toString(),
+                          style: TextStyle(
+                            fontSize: 12.6.sp,
+                            color: const Color(0xFF718096),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 21.6.h),
+                        ElevatedButton.icon(
+                          onPressed: controller.refreshDashboard,
+                          icon: Icon(Icons.refresh),
+                          label: Text('Try Again'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF718096),
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 21.6.w,
+                              vertical: 10.8.h,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.8.r),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: controller.refreshDashboard,
                   color: const Color(0xFF718096),
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 21.6.h),
-              ElevatedButton.icon(
-                onPressed: controller.refreshDashboard,
-                icon: Icon(Icons.refresh),
-                label: Text('Try Again'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF718096),
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 21.6.w,
-                    vertical: 10.8.h,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: EdgeInsets.all(18.0.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildStatsSection(),
+                          SizedBox(height: 21.6.h),
+                          _buildInspectionTabs(),
+                        ],
+                      ),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.8.r),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
-          : RefreshIndicator(
-        onRefresh: controller.refreshDashboard,
-        color: const Color(0xFF718096),
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.all(18.0.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildStatsSection(),
-                SizedBox(height: 21.6.h),
-                _buildInspectionTabs(),
-              ],
-            ),
-          ),
-        ),
-      )),
+                )),
     );
   }
 
@@ -205,11 +207,14 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
                   Row(
                     children: [
                       Text(
-                        controller.todaysInspections.value?['count']?.toString() ?? '0',
+                        controller.todaysInspections.value?['count']
+                                ?.toString() ??
+                            '0',
                         style: TextStyle(
                           fontSize: 32.4.sp,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1A202C), // Deep grey for emphasis
+                          color:
+                              const Color(0xFF1A202C), // Deep grey for emphasis
                         ),
                       ),
                       SizedBox(width: 7.2.w),
@@ -252,7 +257,8 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
   }
 
   Widget _buildStatusCards() {
-    final status = controller.todaysInspections.value!['status'] as Map<String, dynamic>;
+    final status =
+        controller.todaysInspections.value!['status'] as Map<String, dynamic>;
     return Row(
       children: [
         Expanded(
@@ -276,7 +282,8 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
     );
   }
 
-  Widget _buildStatusCard(String title, String count, Color color, IconData icon) {
+  Widget _buildStatusCard(
+      String title, String count, Color color, IconData icon) {
     return Container(
       padding: EdgeInsets.all(14.4.w),
       decoration: BoxDecoration(
@@ -337,7 +344,6 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
     );
   }
 
-
   Widget _buildInspectionItems() {
     if (controller.inspectionItems.isEmpty) {
       return Center(
@@ -373,9 +379,7 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
       );
     }
 
-    return
-
-      Column(
+    return Column(
       children: [
         for (int i = 0; i < controller.inspectionItems.length; i++)
           InspectionItem(

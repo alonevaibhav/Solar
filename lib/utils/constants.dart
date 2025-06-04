@@ -31,6 +31,10 @@ String getTodaySchedule(int inspectorId) => "/schedules/inspector-schedules/toda
 
 
 
+String submitInspectionReport = "/api/report/cleaner-reports";
+
+
+
 
 
 

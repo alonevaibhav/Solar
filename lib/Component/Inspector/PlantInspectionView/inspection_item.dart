@@ -15,8 +15,7 @@ class InspectionItem extends StatefulWidget {
   State<InspectionItem> createState() => _InspectionItemState();
 }
 
-class _InspectionItemState extends State<InspectionItem>
-    with SingleTickerProviderStateMixin {
+class _InspectionItemState extends State<InspectionItem> with SingleTickerProviderStateMixin {
   bool isExpanded = false;
   late AnimationController _animationController;
   late Animation<double> _expandAnimation;
@@ -303,6 +302,42 @@ class _InspectionItemState extends State<InspectionItem>
                         [areaName, talukaName, stateName].where((s) => s.isNotEmpty).join(', '),
                       ),
 
+                    SizedBox(height: 20.h),
+
+                    // Start Inspection Button inside expandable section
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: widget.onTap,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _getStatusColor(),
+                          foregroundColor: Colors.white,
+                          elevation: 2,
+                          shadowColor: _getStatusColor().withOpacity(0.3),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.play_circle_filled,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'Start Inspection',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../Controller/login_controller.dart';
+import '../../utils/drop_down.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -92,7 +94,7 @@ class LoginView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Username/Email',
+          'Username',
           style: TextStyle(
             fontSize: 16.sp * scale,
             fontWeight: FontWeight.w500,
@@ -153,148 +155,84 @@ class LoginView extends StatelessWidget {
         ),
         SizedBox(height: 8.h * scale),
         Obx(() => TextFormField(
-              controller: controller.passwordController,
-              obscureText: !controller.isPasswordVisible.value,
-              textInputAction: TextInputAction.next,
-              validator: controller.validatePassword,
-              decoration: InputDecoration(
-                hintText: 'Enter password...',
-                hintStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 16.sp * scale,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: const BorderSide(color: Colors.red),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16.w * scale,
-                  vertical: 16.h * scale,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    controller.isPasswordVisible.value
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: Colors.grey[600],
-                  ),
-                  onPressed: controller.togglePasswordVisibility,
-                ),
+          controller: controller.passwordController,
+          obscureText: !controller.isPasswordVisible.value,
+          textInputAction: TextInputAction.next,
+          validator: controller.validatePassword,
+          decoration: InputDecoration(
+            hintText: 'Enter password...',
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 16.sp * scale,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r * scale),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r * scale),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r * scale),
+              borderSide: const BorderSide(color: Colors.black, width: 2),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r * scale),
+              borderSide: const BorderSide(color: Colors.red),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w * scale,
+              vertical: 16.h * scale,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                controller.isPasswordVisible.value
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color: Colors.grey[600],
               ),
-            )),
+              onPressed: controller.togglePasswordVisibility,
+            ),
+          ),
+        )),
       ],
     );
   }
 
   Widget _buildRoleDropdown(LoginController controller, double scale) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Role',
-          style: TextStyle(
-            fontSize: 16.sp * scale,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
-        ),
-        SizedBox(height: 8.h * scale),
-        Obx(() => DropdownButtonFormField<String>(
-              value: controller.selectedRole.value.isEmpty
-                  ? null
-                  : controller.selectedRole.value,
-              validator: controller.validateRole,
-              decoration: InputDecoration(
-                hintText: 'Select your role...',
-                hintStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 16.sp * scale,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r * scale),
-                  borderSide: const BorderSide(color: Colors.red),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16.w * scale,
-                  vertical: 16.h * scale,
-                ),
-              ),
-              items: [
-                DropdownMenuItem(
-                  value: 'inspector',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: Colors.blue[600],
-                        size: 20,
-                      ),
-                      SizedBox(width: 8.w * scale),
-                      Text(
-                        'Inspector',
-                        style: TextStyle(fontSize: 16.sp * scale),
-                      ),
-                    ],
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 'cleaner',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.cleaning_services,
-                        color: Colors.green[600],
-                        size: 20,
-                      ),
-                      SizedBox(width: 8.w * scale),
-                      Text(
-                        'Cleaner',
-                        style: TextStyle(fontSize: 16.sp * scale),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  controller.setSelectedRole(value);
-                }
-              },
-              dropdownColor: Colors.white,
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: Colors.grey[600],
-              ),
-            )),
-      ],
+    return CustomDropdownField<String>(
+      value: controller.selectedRole.value.isEmpty ? null : controller.selectedRole.value,
+      labelText: 'Role',
+      hintText: 'Select your role...',
+      items: ['inspector', 'cleaner'],
+      itemLabelBuilder: (item) => item,
+      onChanged: (value) {
+        if (value != null) {
+          controller.setSelectedRole(value);
+        }
+      },
+      validator: controller.validateRole,
+      prefixIcon: Icons.work,
+      borderRadius: 12.r * scale,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16.w * scale,
+        vertical: 16.h * scale,
+      ),
+      labelStyle: TextStyle(
+        fontSize: 16.sp * scale,
+        fontWeight: FontWeight.w500,
+        color: Colors.grey[700],
+      ),
+      hintStyle: TextStyle(
+        color: Colors.grey[400],
+        fontSize: 16.sp * scale,
+      ),
+      itemTextStyle: TextStyle(
+        fontSize: 16.sp * scale,
+      ),
     );
   }
 
@@ -315,20 +253,20 @@ class LoginView extends StatelessWidget {
         ),
         child: controller.isLoading.value
             ? SizedBox(
-                height: 20.h * scale,
-                width: 20.w * scale,
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                ),
-              )
+          height: 20.h * scale,
+          width: 20.w * scale,
+          child: const CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+          ),
+        )
             : Text(
-                'Sign In',
-                style: TextStyle(
-                  fontSize: 18.sp * scale,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+          'Sign In',
+          style: TextStyle(
+            fontSize: 18.sp * scale,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

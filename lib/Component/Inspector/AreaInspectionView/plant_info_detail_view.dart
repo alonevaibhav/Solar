@@ -96,46 +96,6 @@ class PlantInspectionDetailView extends StatelessWidget {
                 // Panel count indicators
                 Row(
                   children: [
-                    // Green panel indicator
-                    Container(
-                      width: 70.w,
-                      height: 40.h,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFA5D6A7),
-                        borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(8.r),
-                        ),
-                      ),
-                      child: Text(
-                        greenPanels.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17.sp,
-                        ),
-                      ),
-                    ),
-                    // Red panel indicator
-                    Container(
-                      width: 70.w,
-                      height: 40.h,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.red[300],
-                        borderRadius: BorderRadius.horizontal(
-                          right: Radius.circular(8.r),
-                        ),
-                      ),
-                      child: Text(
-                        redPanels.toString(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17.sp,
-                        ),
-                      ),
-                    ),
                     SizedBox(width: 16.w),
                     // Total panel count
                     Container(
@@ -297,22 +257,6 @@ class PlantInspectionDetailView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 24.h),
-                // Plant Panel Status heading
-                Text(
-                  'Plant Panel Status',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                // Panel status grid
-                PanelStatusGrid(
-                  greenCount: greenPanels,
-                  redCount: redPanels,
-                ),
-                SizedBox(height: 24.h),
-                // Cleaner info card
                 CleanerInfoCard(
                   name: plantData['cleanerName'] ?? 'Cleaner Name',
                   phone: '+91 8001372561',
