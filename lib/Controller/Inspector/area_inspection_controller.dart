@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:solar_app/Route%20Manager/app_routes.dart';
 
+import '../../API Service/Repository/fetch_cleaner_report.dart';
+
 class AreaInspectionController extends GetxController {
   // Status filter
   final RxString currentTab = 'Ongoing Cleaning'.obs;
@@ -50,6 +52,7 @@ class AreaInspectionController extends GetxController {
 
     // Load initial data
     fetchAreaData();
+    // fetchCleanerReport();
   }
 
   @override

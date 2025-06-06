@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -177,13 +179,5 @@ class CustomDropdownField<T> extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-// Extension method for easy string capitalization
-extension StringExtension on String {
-  String get capitalize {
-    if (isEmpty) return this;
-    return this[0].toUpperCase() + substring(1).toLowerCase();
   }
 }

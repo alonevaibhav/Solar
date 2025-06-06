@@ -1,13 +1,8 @@
-// lib/features/cleanup_schedule/controllers/cleanup_schedule_controller.dart
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../API Service/Model/Request/cleaner_shedule_model.dart';
 import '../../../API Service/api_service.dart';
 import '../../../Route Manager/app_routes.dart';
+import '../../../utils/constants.dart';
 
 class CleanupScheduleController extends GetxController {
   // Reactive variables
@@ -26,8 +21,10 @@ class CleanupScheduleController extends GetxController {
   final selectedTaskData = Rxn<Map<String, dynamic>>();
 
   // Task status tracking (separate from API data)
-  final taskStatuses = <int, String>{}.obs; // task_id -> status (pending/ongoing/completed)
-  final taskETAs = <int, int>{}.obs; // task_id -> remaining minutes from duration
+  final taskStatuses =
+      <int, String>{}.obs; // task_id -> status (pending/ongoing/completed)
+  final taskETAs =
+      <int, int>{}.obs; // task_id -> remaining minutes from duration
 
   // Search controller
   final searchController = TextEditingController();
@@ -74,7 +71,8 @@ class CleanupScheduleController extends GetxController {
 
       // Make GET request using ApiService
       final response = await ApiService.get<List<dynamic>>(
-        endpoint: '/schedules/cleaner-schedules/today/$inspectorId',
+        // endpoint: '/schedules/cleaner-schedules/today/$inspectorId',
+        endpoint: getTodayScheduleCleaner(int.parse(inspectorId)),
         fromJson: (json) {
           if (json['success'] == true) {
             return List<dynamic>.from(json['data'] ?? []);
@@ -110,8 +108,6 @@ class CleanupScheduleController extends GetxController {
     }
   }
 
-
-
   // Initialize task statuses (separate tracking)
   void _initializeTaskStatuses() {
     for (var schedule in allSchedules) {
@@ -120,7 +116,6 @@ class CleanupScheduleController extends GetxController {
 
       // Initialize with default status (you can modify this logic)
       taskStatuses[id] = 'pending'; // Default status
-
     }
   }
 
@@ -163,7 +158,8 @@ class CleanupScheduleController extends GetxController {
 
   // Move completed task from pending to completed
   void _moveTaskToCompleted(int taskId) {
-    final taskIndex = pendingSchedules.indexWhere((task) => task['id'] == taskId);
+    final taskIndex =
+        pendingSchedules.indexWhere((task) => task['id'] == taskId);
     if (taskIndex != -1) {
       final task = pendingSchedules[taskIndex];
       pendingSchedules.removeAt(taskIndex);
@@ -197,9 +193,12 @@ class CleanupScheduleController extends GetxController {
     if (searchQuery.value.isEmpty) return true;
 
     final query = searchQuery.value.toLowerCase();
-    return schedule['area_name']?.toString().toLowerCase().contains(query) == true ||
-        schedule['plant_location']?.toString().toLowerCase().contains(query) == true ||
-        schedule['cleaner_name']?.toString().toLowerCase().contains(query) == true;
+    return schedule['area_name']?.toString().toLowerCase().contains(query) ==
+            true ||
+        schedule['plant_location']?.toString().toLowerCase().contains(query) ==
+            true ||
+        schedule['cleaner_name']?.toString().toLowerCase().contains(query) ==
+            true;
   }
 
   // Update search query
@@ -298,7 +297,9 @@ class CleanupScheduleController extends GetxController {
     } else {
       final hours = minutes ~/ 60;
       final remainingMinutes = minutes % 60;
-      return remainingMinutes > 0 ? '${hours}h ${remainingMinutes}m' : '${hours}h';
+      return remainingMinutes > 0
+          ? '${hours}h ${remainingMinutes}m'
+          : '${hours}h';
     }
   }
 }

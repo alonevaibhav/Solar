@@ -1,12 +1,12 @@
 
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/View/Inspector/plant_inspection_view.dart';
 import 'package:solar_app/View/Inspector/user_profile.dart';
-
+import '../../API Service/Repository/fetch_cleaner_report.dart';
 import '../../Component/Inspector/AlertsView/alerts_view.dart';
+import '../../Component/Inspector/TicketPage/CreateTicket/ticket_controller.dart';
+import '../../Component/Inspector/TicketPage/CreateTicket/ticket_raising_view.dart';
 import '../../Component/Inspector/TicketPage/ticket_view.dart';
 import '../../Controller/Inspector/alerts_controller.dart';
 import '../../Controller/Inspector/area_inspection_controller.dart';
@@ -35,6 +35,7 @@ class _InDashboardState extends State<InDashboard> {
     const InspectorAlertsTab(),
     const InspectorProfileTab(),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +79,11 @@ class InspectorTasksTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TicketController controller = Get.put(TicketController());
+    // final TicketRaisingController controller = Get.put(TicketRaisingController());
 
     return Scaffold(
       body: TicketView(),
+      // body: TicketRaisingView(),
     );
   }
 }

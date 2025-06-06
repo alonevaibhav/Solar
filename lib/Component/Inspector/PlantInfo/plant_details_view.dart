@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../Route Manager/app_routes.dart';
+
 class InfoPlantDetailsView extends StatelessWidget {
   const InfoPlantDetailsView({Key? key}) : super(key: key);
 
@@ -116,6 +118,12 @@ class InfoPlantDetailsView extends StatelessWidget {
           onPressed: () => Get.back(),
         ),
       ),
+      actions: [
+        Container(
+          margin: EdgeInsets.only(right: 12.w, top: 8.h, bottom: 8.h),
+          child: _buildCreateTicketButton(),
+        ),
+      ],
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: BoxDecoration(
@@ -256,7 +264,7 @@ class InfoPlantDetailsView extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 16.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
             ),
@@ -265,7 +273,7 @@ class InfoPlantDetailsView extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 12.sp,
+              fontSize: 10.sp,
               color: Colors.grey.shade500,
             ),
             textAlign: TextAlign.center,
@@ -582,6 +590,69 @@ class InfoPlantDetailsView extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCreateTicketButton() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFE91E63),
+            Color(0xFFAD1457),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(25.r),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFFE91E63).withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Get.toNamed(AppRoutes.inspectorCreateTicket);
+          },
+          borderRadius: BorderRadius.circular(25.r),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(4.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Icon(
+                    Icons.report_problem_outlined,
+                    color: Colors.white,
+                    size: 16.sp,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  'Raise Ticket',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.sp,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

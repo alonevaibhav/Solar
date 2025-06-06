@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../API Service/Repository/fetch_cleaner_report.dart';
 import '../../Component/Inspector/AreaInspectionView/plant_card.dart';
 import '../../Component/Inspector/AreaInspectionView/search_bar_widget.dart';
 import '../../Component/Inspector/AreaInspectionView/status_bar.dart';
@@ -11,6 +12,11 @@ class AreaInspectionView extends GetView<AreaInspectionController> {
 
   @override
   Widget build(BuildContext context) {
+    // // This triggers the fetchCleanerReport() only once after first build
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   fetchCleanerReport(); // Call your separate function here
+    // });
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(

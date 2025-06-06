@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:solar_app/Component/Inspector/AreaInspectionView/plant_info_detail_view.dart';
 import '../../../Controller/Inspector/area_inspection_controller.dart';
-import '../../../Route Manager/app_routes.dart';
 
 class PlantCardWidget extends StatelessWidget {
   final Map<String, dynamic> plant;
@@ -17,8 +16,10 @@ class PlantCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final status = plant['status'] as String;
     final Color cardColor = controller.getStatusColor(status);
+
 
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
