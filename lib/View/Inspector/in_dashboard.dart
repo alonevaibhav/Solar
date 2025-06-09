@@ -3,17 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:solar_app/View/Inspector/plant_inspection_view.dart';
 import 'package:solar_app/View/Inspector/user_profile.dart';
-import '../../API Service/Repository/fetch_cleaner_report.dart';
-import '../../Component/Inspector/AlertsView/alerts_view.dart';
-import '../../Component/Inspector/TicketPage/CreateTicket/ticket_controller.dart';
-import '../../Component/Inspector/TicketPage/CreateTicket/ticket_raising_view.dart';
 import '../../Component/Inspector/TicketPage/ticket_view.dart';
-import '../../Controller/Inspector/alerts_controller.dart';
 import '../../Controller/Inspector/area_inspection_controller.dart';
 import '../../Controller/Inspector/plant_inspection_controller.dart';
 import '../../Controller/Inspector/ticket_controller.dart';
 import '../../Controller/Inspector/user_profile_controller.dart';
 import '../../utils/exit.dart';
+import '../User/no used.dart';
 import 'SheduleModule/shedule_view.dart';
 import 'area_inspection_view.dart';
 import 'bottom_nevigation.dart';
@@ -94,8 +90,10 @@ class InspectorHomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PlantInspectionController controller = Get.put(PlantInspectionController());
+    // final ShimmerController controller = Get.put(ShimmerController());
     return Scaffold(
       body: PlantInspectionView(),
+      // body: ShimmerPatternsExample(),
     );
   }
 }

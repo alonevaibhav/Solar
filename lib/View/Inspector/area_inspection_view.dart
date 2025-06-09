@@ -14,7 +14,7 @@ class AreaInspectionView extends GetView<AreaInspectionController> {
   Widget build(BuildContext context) {
     // // This triggers the fetchCleanerReport() only once after first build
     // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   fetchCleanerReport(); // Call your separate function here
+      fetchCleanerReport(); // Call your separate function here
     // });
 
     return Scaffold(

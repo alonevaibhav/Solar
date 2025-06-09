@@ -384,7 +384,16 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
         for (int i = 0; i < controller.inspectionItems.length; i++)
           InspectionItem(
             inspectionData: controller.inspectionItems[i],
-            onTap: () => controller.navigateToInspectionDetails(controller.inspectionItems[i]),
+            onTap: () async {
+              // Get the specific item's ID
+              int specificItemId = controller.inspectionItems[i]['id'];
+
+              // Fetch inspection data for the specific item
+              await controller.fetchInspectorData(specificItemId);
+
+              // Navigate to inspection details after fetching data
+              controller.navigateToInspectionDetails(controller.inspectionItems[i]);
+            },
           ),
       ],
     );

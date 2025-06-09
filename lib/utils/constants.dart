@@ -23,9 +23,9 @@ String getAllPlant(int inspectorId) => "/schedules/inspector-schedules/inspector
 
 String getTodayScheduleInspector(int inspectorId) => "/schedules/inspector-schedules/today/$inspectorId";
 
-
-
 String getCleanerReport(int inspectorId) => "/api/report/cleaner-reports/inspector/$inspectorId";
+
+String getInspectorDataByID(int inspectionCardId) => "/api/report/cleaner-reports/inspector/schedule/$inspectionCardId";
 
 String submitInspectionReport = "/api/report/cleaner-reports";
 

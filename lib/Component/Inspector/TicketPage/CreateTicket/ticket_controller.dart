@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
-// Extension method for string capitalization
-extension StringExtension on String {
-  String get capitalize {
-    if (isEmpty) return this;
-    return this[0].toUpperCase() + substring(1).toLowerCase();
-  }
-}
+// // Extension method for string capitalization
+// extension StringExtension on String {
+//   String get capitalize {
+//     if (isEmpty) return this;
+//     return this[0].toUpperCase() + substring(1).toLowerCase();
+//   }
+// }
 
 class TicketRaisingController extends GetxController {
   // Form key for validation

@@ -34,7 +34,6 @@ class ApiService {
     _prefs = await SharedPreferences.getInstance();
   }
 
-
   /// ==================== JWT Management ====================
   static Future<void> setToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
@@ -56,27 +55,16 @@ class ApiService {
     return prefs.getString('uid');
   }
 
-  // static Future<void> setToken(String token) async {
-  //   await _prefs?.setString('token', token);
-  // }
-  //
-  // static String? getToken() => _prefs?.getString('token');
-  //
-  // static Future<void> setUid(String uid) async {
-  //   await _prefs?.setString('uid', uid);
-  // }
-  //
-  // static String? getUid() => _prefs?.getString('uid');
-
   static Future<void> clearAuthData() async {
-    await _prefs?.remove('token');
-    await _prefs?.remove('uid');
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    await prefs.remove('uid');
   }
 
   // ==================== Header Builder ====================
-
-  static Map<String, String> _getHeaders({bool includeToken = true}) {
-    final token = includeToken ? getToken() : null;
+  // ✅ FIXED: Made this method async to properly handle token retrieval
+  static Future<Map<String, String>> _getHeaders({bool includeToken = true}) async {
+    final token = includeToken ? await getToken() : null;
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -92,14 +80,14 @@ class ApiService {
     required T Function(dynamic) fromJson,
     bool includeToken = true,
   }) async {
-    final uri =
-        Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
+    final uri = Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
+    final headers = await _getHeaders(includeToken: includeToken); // ✅ FIXED: Added await
+
     return _sendRequest<T>(
       method: 'GET',
       uri: uri,
       fromJson: fromJson,
-      requestFunc: () =>
-          http.get(uri, headers: _getHeaders(includeToken: includeToken)),
+      requestFunc: () => http.get(uri, headers: headers),
     );
   }
 
@@ -110,14 +98,14 @@ class ApiService {
     bool includeToken = true,
   }) async {
     final uri = Uri.parse('$baseUrl$endpoint');
+    final headers = await _getHeaders(includeToken: includeToken); // ✅ FIXED: Added await
+
     return _sendRequest<T>(
       method: 'POST',
       uri: uri,
       body: body,
       fromJson: fromJson,
-      requestFunc: () => http.post(uri,
-          headers: _getHeaders(includeToken: includeToken),
-          body: json.encode(body)),
+      requestFunc: () => http.post(uri, headers: headers, body: json.encode(body)),
     );
   }
 
@@ -128,14 +116,14 @@ class ApiService {
     bool includeToken = true,
   }) async {
     final uri = Uri.parse('$baseUrl$endpoint');
+    final headers = await _getHeaders(includeToken: includeToken); // ✅ FIXED: Added await
+
     return _sendRequest<T>(
       method: 'PUT',
       uri: uri,
       body: body,
       fromJson: fromJson,
-      requestFunc: () => http.put(uri,
-          headers: _getHeaders(includeToken: includeToken),
-          body: json.encode(body)),
+      requestFunc: () => http.put(uri, headers: headers, body: json.encode(body)),
     );
   }
 
@@ -146,6 +134,8 @@ class ApiService {
     bool includeToken = true,
   }) async {
     final uri = Uri.parse('$baseUrl$endpoint');
+    final headers = await _getHeaders(includeToken: includeToken); // ✅ FIXED: Added await
+
     return _sendRequest<T>(
       method: 'DELETE',
       uri: uri,
@@ -153,7 +143,7 @@ class ApiService {
       fromJson: fromJson,
       requestFunc: () => http.delete(
         uri,
-        headers: _getHeaders(includeToken: includeToken),
+        headers: headers,
         body: body != null ? json.encode(body) : null,
       ),
     );
@@ -173,8 +163,8 @@ class ApiService {
 
     try {
       final request = http.MultipartRequest('POST', uri);
-      final headers = _getHeaders(includeToken: includeToken);
-      headers.remove('Content-Type');
+      final headers = await _getHeaders(includeToken: includeToken); // ✅ FIXED: Added await
+      headers.remove('Content-Type'); // Remove Content-Type for multipart
       request.headers.addAll(headers);
       request.fields.addAll(fields);
 
@@ -223,9 +213,9 @@ class ApiService {
   }
 
   static ApiResponse<T> _handleResponse<T>(
-    http.Response response,
-    T Function(dynamic) fromJson,
-  ) {
+      http.Response response,
+      T Function(dynamic) fromJson,
+      ) {
     final statusCode = response.statusCode;
     final responseBody = response.body;
 
@@ -259,10 +249,10 @@ class ApiService {
   }
 
   static ApiResponse<T> _handleError<T>(
-    String method,
-    Uri uri,
-    String message,
-  ) {
+      String method,
+      Uri uri,
+      String message,
+      ) {
     _logError(method, uri, message);
     return ApiResponse<T>(
       success: false,
@@ -300,8 +290,9 @@ class ApiService {
     return 'Unknown error occurred';
   }
 
-  static void _logRequest(String method, Uri uri,
-      {Map<String, dynamic>? body}) {
+  // ==================== Logging Methods ====================
+
+  static void _logRequest(String method, Uri uri, {Map<String, dynamic>? body}) {
     if (kDebugMode) {
       print('┌───────────────────────────────────────────────────');
       print('│ 🚀 API REQUEST: $method ${uri.toString()}');
@@ -317,8 +308,7 @@ class ApiService {
       print('┌───────────────────────────────────────────────────');
       print('│ 📎 UPLOADING FILES:');
       for (var file in files) {
-        print(
-            '│   - ${file.field}: ${file.filePath} (${file.contentType.toString()})');
+        print('│   - ${file.field}: ${file.filePath} (${file.contentType.toString()})');
       }
       print('└───────────────────────────────────────────────────');
     }
@@ -330,13 +320,11 @@ class ApiService {
       final statusEmoji = statusCode >= 200 && statusCode < 300 ? '✅' : '❌';
 
       print('┌───────────────────────────────────────────────────');
-      print(
-          '│ $statusEmoji API RESPONSE: ${response.request?.method} ${response.request?.url}');
+      print('│ $statusEmoji API RESPONSE: ${response.request?.method} ${response.request?.url}');
       print('│ 🔢 STATUS CODE: $statusCode');
       try {
         final jsonResponse = json.decode(response.body);
-        final prettyJson =
-            const JsonEncoder.withIndent('  ').convert(jsonResponse);
+        final prettyJson = const JsonEncoder.withIndent('  ').convert(jsonResponse);
         print('│ 📄 RESPONSE BODY:');
         for (var line in prettyJson.split('\n')) {
           print('│   $line');
@@ -356,8 +344,7 @@ class ApiService {
     }
   }
 
-  static void _logError(String operation, Uri? url, String message,
-      {int? statusCode}) {
+  static void _logError(String operation, Uri? url, String message, {int? statusCode}) {
     if (kDebugMode) {
       print('┌───────────────────────────────────────────────────');
       print('│ ❌ API ERROR: $operation ${url?.toString() ?? ''}');
@@ -365,6 +352,24 @@ class ApiService {
         print('│ 🔢 STATUS CODE: $statusCode');
       }
       print('│ 🚨 ERROR MESSAGE: $message');
+      print('└───────────────────────────────────────────────────');
+    }
+  }
+
+  // ==================== Debug Method ====================
+  // ✅ NEW: Add this method to debug token issues
+  static Future<void> debugTokenInfo() async {
+    if (kDebugMode) {
+      final token = await getToken();
+      final uid = await getUid();
+      print('┌───────────────────────────────────────────────────');
+      print('│ 🔍 DEBUG TOKEN INFO:');
+      print('│ 🎫 Token: ${token ?? 'NULL'}');
+      print('│ 👤 UID: ${uid ?? 'NULL'}');
+      print('│ 📏 Token Length: ${token?.length ?? 0}');
+      if (token != null && token.isNotEmpty) {
+        print('│ 🔤 Token Preview: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
+      }
       print('└───────────────────────────────────────────────────');
     }
   }
@@ -394,34 +399,13 @@ class MultipartFiles {
       case 'doc':
         return MediaType('application', 'msword');
       case 'docx':
-        return MediaType('application',
-            'vnd.openxmlformats-officedocument.wordprocessingml.document');
+        return MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document');
       case 'xls':
         return MediaType('application', 'vnd.ms-excel');
       case 'xlsx':
-        return MediaType('application',
-            'vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        return MediaType('application', 'vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       default:
         return MediaType('application', 'octet-stream');
     }
   }
 }
-
-// Shared preference Example:
-// await ApiService.setToken(response.data['token']);
-// await ApiService.setUid(response.data['uid']);
-// final token = ApiService.getToken();
-// final uid = ApiService.getUid();
-
-// Token Passing Example:
-// final response = await ApiService.post<User>(
-// endpoint: 'public/submit',
-// body: {'name': 'John'},
-// fromJson: (json) => User.fromJson(json),
-// includeToken: false, // 👈 token will NOT be sent
-// );
-
-// //it used in simgle dataset come
-// fromJson: (json) => User.fromJson(json),
-// //it used when arrey come
-// fromJson: (jsonList) {return (jsonList as List).map((item) => Product.fromJson(item)).toList();},
