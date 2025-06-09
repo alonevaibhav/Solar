@@ -27,6 +27,9 @@ String getCleanerReport(int inspectorId) => "/api/report/cleaner-reports/inspect
 
 String getInspectorDataByID(int inspectionCardId) => "/api/report/cleaner-reports/inspector/schedule/$inspectionCardId";
 
+
+String getUpdateInspectorDataEndpoint(int inspectionCardId) => "/api/report/cleaner-reports/inspector/$inspectionCardId";
+
 String submitInspectionReport = "/api/report/cleaner-reports";
 
 

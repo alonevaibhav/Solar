@@ -458,20 +458,23 @@ class PlantInspectionController extends GetxController {
   InspectorDataResponse? inspectorDataResponse; // Store the response data
   final selectedTabIndex = 0.obs;
 
+  int? inspectionCardId; // Store inspectionCardId
+
+
   // Form state variables - these will be unique per instance
   late final TextEditingController dateController;
   late final TextEditingController timeController;
   late final TextEditingController inspectorReviewController;
   late final TextEditingController clientReviewController;
-  late final GlobalKey<FormState> formKey;
-  final selectedStatus = 'pending'.obs;
-  final isSubmitting = false.obs;
-  final isDataLoaded = false.obs; // Track if inspector data is loaded
-
   // Changed from single image to multiple images
   final uploadedImagePaths = <String>[].obs;
   final isUploadingImage = false.obs;
   final uploadedImagePath = Rxn<String>();
+
+  late final GlobalKey<FormState> formKey;
+  final selectedStatus = 'pending'.obs;
+  final isSubmitting = false.obs;
+  final isDataLoaded = false.obs; // Track if inspector data is loaded
 
   final statusOptions = ['pending', 'cleaning', 'done', 'failed'];
 
@@ -492,7 +495,8 @@ class PlantInspectionController extends GetxController {
     }
 
     // Only fetch inspection items for dashboard instances (not form instances)
-    if (Get.currentRoute.contains('dashboard') || Get.currentRoute.contains('inspection_list')) {
+    if (Get.currentRoute.contains('dashboard') ||
+        Get.currentRoute.contains('inspection_list')) {
       fetchInspectionItems();
     }
     _populateFormWithInspectorData();
@@ -522,6 +526,7 @@ class PlantInspectionController extends GetxController {
     inspectorReviewController.clear();
     clientReviewController.clear();
   }
+
   void _populateFormWithInspectorData() {
     if (inspectorDataResponse?.data != null) {
       final data = inspectorDataResponse!.data;
@@ -537,10 +542,12 @@ class PlantInspectionController extends GetxController {
 
       // Ensure the context is valid for time formatting
       if (Get.context != null) {
-        timeController.text = data.cleaningTime ?? TimeOfDay.now().format(Get.context!);
+        timeController.text =
+            data.cleaningTime ?? TimeOfDay.now().format(Get.context!);
       } else {
         print('Error: Context is null');
-        timeController.text = DateTime.now().toString().split(' ')[1].split('.')[0];
+        timeController.text =
+            DateTime.now().toString().split(' ')[1].split('.')[0];
       }
 
       // Populate status
@@ -571,17 +578,11 @@ class PlantInspectionController extends GetxController {
     }
   }
 
-
-
-
   void _calculateDashboardStats() {
     if (inspectionItems.isEmpty) {
       todaysInspections.value = {
         'count': 0,
-        'status': {
-          'complete': 0,
-          'pending': 0
-        },
+        'status': {'complete': 0, 'pending': 0},
       };
       dashboardData.value = {
         'todaysInspections': todaysInspections.value,
@@ -637,12 +638,14 @@ class PlantInspectionController extends GetxController {
 
       if (response.success && response.data != null) {
         final data = response.data!['data'] as List<dynamic>;
-        inspectionItems.value = data.map((item) => Map<String, dynamic>.from(item as Map)).toList();
+        inspectionItems.value =
+            data.map((item) => Map<String, dynamic>.from(item as Map)).toList();
 
         // Calculate dashboard statistics after fetching inspection items
         _calculateDashboardStats();
       } else {
-        errorMessageDashboard.value = response.errorMessage ?? 'Failed to load inspection items';
+        errorMessageDashboard.value =
+            response.errorMessage ?? 'Failed to load inspection items';
       }
     } catch (e) {
       errorMessageDashboard.value = 'Failed to load inspection items: $e';
@@ -871,7 +874,8 @@ class PlantInspectionController extends GetxController {
     );
   }
 
-  Future<void> submitInspectionReport(Map<String, dynamic> inspectionData) async {
+  Future<void> submitInspectionReport(
+      Map<String, dynamic> inspectionData) async {
     if (formKey.currentState!.validate()) {
       isSubmitting.value = true;
       try {
@@ -917,7 +921,8 @@ class PlantInspectionController extends GetxController {
 
       if (response.success) {
         inspectorDataResponse = response.data; // Store the response data
-        print('Fetched data: ${inspectorDataResponse?.data.date}');
+        this.inspectionCardId = inspectorDataResponse?.data.id; // Store inspectionCardId
+        print('Fetched data: ${inspectorDataResponse?.data.id}');
 
         // Populate the form with the fetched data
         _populateFormWithInspectorData();
@@ -930,4 +935,105 @@ class PlantInspectionController extends GetxController {
       Get.snackbar('Error', 'An error occurred while loading data');
     }
   }
+
+
+  Future<void> updateInspectionReport() async {
+
+    if (formKey.currentState!.validate()) {
+      // Check if inspectionCardId is available
+      if (inspectionCardId == null) {
+        Get.snackbar('Error', 'Inspection ID not found');
+        return;
+      }
+
+      // Limit photos to maximum 10
+      if (uploadedImagePaths.length > 10) {
+        Get.snackbar('Error', 'Maximum 10 photos allowed');
+        return;
+      }
+
+      isSubmitting.value = true;
+      try {
+        String endpoint = getUpdateInspectorDataEndpoint(inspectionCardId!);
+
+        // Get current date and time
+        DateTime now = DateTime.now();
+        String currentDate = now.toString().split(' ')[0]; // YYYY-MM-DD format
+        String currentTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}"; // HH:MM format
+
+        // Prepare form fields
+        Map<String, String> fields = {
+          'cleaning_date': dateController.text,
+          'cleaning_time': timeController.text,
+          'status': selectedStatus.value,
+          'inspector_review': inspectorReviewController.text,
+          'client_review': clientReviewController.text,
+          'ratings': '4', // Default rating as requested
+          'date': currentDate, // Current date
+          'time': currentTime, // Current time
+        };
+
+        // Prepare files for upload
+        List<MultipartFiles> files = [];
+        for (int i = 0; i < uploadedImagePaths.length; i++) {
+          files.add(MultipartFiles(
+            field: 'attachments', // Use 'attachments' as field name for all images
+            filePath: uploadedImagePaths[i],
+          ));
+        }
+
+        // Make the multipart PUT API call
+        final response = await ApiService.multipartPut<Map<String, dynamic>>(
+          endpoint: endpoint,
+          fields: fields,
+          files: files,
+          fromJson: (json) => json as Map<String, dynamic>,
+          includeToken: true,
+        );
+
+        if (response.success == true) {
+          Get.snackbar(
+            'Success',
+            'Inspection report updated successfully with ${uploadedImagePaths.length} photos',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: Duration(seconds: 2),
+            snackPosition: SnackPosition.BOTTOM, // Show snackbar at the bottom
+          );
+
+
+
+          // Optionally refresh the dashboard
+          await refreshDashboard();
+
+          // Navigate back or refresh data as needed
+          Get.offAllNamed(AppRoutes.inspector);
+
+        } else {
+          Get.snackbar(
+            'Error',
+            response.errorMessage ?? 'Failed to update inspection report',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: Duration(seconds: 3),
+          );
+        }
+      } catch (e) {
+        Get.snackbar(
+          'Error',
+          'Failed to update inspection report: $e',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+        );
+        print('Update inspection error: $e');
+      } finally {
+        isSubmitting.value = false;
+      }
+    }
+  }
+
+
+
+
 }
