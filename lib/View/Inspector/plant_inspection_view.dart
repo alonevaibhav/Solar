@@ -11,7 +11,7 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:
-          const Color(0xFFF8F9FA), // Professional light grey background
+      const Color(0xFFF8F9FA), // Professional light grey background
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -65,105 +65,105 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
       ),
       body: Obx(() => controller.isLoadingDashboard.value
           ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(const Color(0xFF718096)),
-                  ),
-                  SizedBox(height: 14.4.h),
-                  Text(
-                    'Loading inspection data...',
-                    style: TextStyle(
-                      fontSize: 14.4.sp,
-                      color: const Color(0xFF718096),
-                    ),
-                  ),
-                ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              valueColor:
+              AlwaysStoppedAnimation<Color>(const Color(0xFF718096)),
+            ),
+            SizedBox(height: 14.4.h),
+            Text(
+              'Loading inspection data...',
+              style: TextStyle(
+                fontSize: 14.4.sp,
+                color: const Color(0xFF718096),
               ),
-            )
+            ),
+          ],
+        ),
+      )
           : controller.errorMessageDashboard.value != null
-              ? Center(
-                  child: Container(
-                    margin: EdgeInsets.all(18.0.w),
-                    padding: EdgeInsets.all(21.6.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14.4.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFFE2E8F0),
-                          blurRadius: 9.0,
-                          offset: const Offset(0, 3.6),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 57.6.sp,
-                          color: const Color(0xFFF56565), // Professional red
-                        ),
-                        SizedBox(height: 14.4.h),
-                        Text(
-                          'Something went wrong',
-                          style: TextStyle(
-                            fontSize: 16.2.sp,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF2D3748),
-                          ),
-                        ),
-                        SizedBox(height: 7.2.h),
-                        Text(
-                          controller.errorMessageDashboard.value.toString(),
-                          style: TextStyle(
-                            fontSize: 12.6.sp,
-                            color: const Color(0xFF718096),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 21.6.h),
-                        ElevatedButton.icon(
-                          onPressed: controller.refreshDashboard,
-                          icon: Icon(Icons.refresh),
-                          label: Text('Try Again'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF718096),
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 21.6.w,
-                              vertical: 10.8.h,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.8.r),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: controller.refreshDashboard,
+          ? Center(
+        child: Container(
+          margin: EdgeInsets.all(18.0.w),
+          padding: EdgeInsets.all(21.6.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14.4.r),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFE2E8F0),
+                blurRadius: 9.0,
+                offset: const Offset(0, 3.6),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 57.6.sp,
+                color: const Color(0xFFF56565), // Professional red
+              ),
+              SizedBox(height: 14.4.h),
+              Text(
+                'Something went wrong',
+                style: TextStyle(
+                  fontSize: 16.2.sp,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF2D3748),
+                ),
+              ),
+              SizedBox(height: 7.2.h),
+              Text(
+                controller.errorMessageDashboard.value.toString(),
+                style: TextStyle(
+                  fontSize: 12.6.sp,
                   color: const Color(0xFF718096),
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Padding(
-                      padding: EdgeInsets.all(18.0.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildStatsSection(),
-                          SizedBox(height: 21.6.h),
-                          _buildInspectionTabs(),
-                        ],
-                      ),
-                    ),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 21.6.h),
+              ElevatedButton.icon(
+                onPressed: controller.refreshDashboard,
+                icon: Icon(Icons.refresh),
+                label: Text('Try Again'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF718096),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 21.6.w,
+                    vertical: 10.8.h,
                   ),
-                )),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.8.r),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+          : RefreshIndicator(
+        onRefresh: controller.refreshDashboard,
+        color: const Color(0xFF718096),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.all(18.0.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildStatsSection(),
+                SizedBox(height: 21.6.h),
+                _buildInspectionTabs(),
+              ],
+            ),
+          ),
+        ),
+      )),
     );
   }
 
@@ -171,18 +171,18 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
     return Container(
       padding: EdgeInsets.all(18.0.w),
       decoration: BoxDecoration(
-        color: Colors.white, // Clean white background
+        color: Colors.white,
         borderRadius: BorderRadius.circular(18.0.r),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFE2E8F0).withOpacity(0.8), // Soft grey shadow
+            color: const Color(0xFFE2E8F0).withOpacity(0.8),
             blurRadius: 12.0,
             offset: const Offset(0, 4.0),
             spreadRadius: 1.0,
           ),
         ],
         border: Border.all(
-          color: const Color(0xFFF7FAFC), // Very light grey border
+          color: const Color(0xFFF7FAFC),
           width: 1.0,
         ),
       ),
@@ -200,21 +200,18 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
                     style: TextStyle(
                       fontSize: 16.2.sp,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF2D3748), // Professional dark grey
+                      color: const Color(0xFF2D3748),
                     ),
                   ),
                   SizedBox(height: 7.2.h),
                   Row(
                     children: [
                       Text(
-                        controller.todaysInspections.value?['count']
-                                ?.toString() ??
-                            '0',
+                        controller.todaysInspections.value?['count']?.toString() ?? '0',
                         style: TextStyle(
                           fontSize: 32.4.sp,
                           fontWeight: FontWeight.bold,
-                          color:
-                              const Color(0xFF1A202C), // Deep grey for emphasis
+                          color: const Color(0xFF1A202C),
                         ),
                       ),
                       SizedBox(width: 7.2.w),
@@ -222,7 +219,7 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
                         'Total',
                         style: TextStyle(
                           fontSize: 14.4.sp,
-                          color: const Color(0xFF718096), // Medium grey
+                          color: const Color(0xFF718096),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -233,22 +230,22 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
               Container(
                 padding: EdgeInsets.all(14.4.w),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF7FAFC), // Very light grey background
+                  color: const Color(0xFFF7FAFC),
                   borderRadius: BorderRadius.circular(14.4.r),
                   border: Border.all(
-                    color: const Color(0xFFE2E8F0), // Light grey border
+                    color: const Color(0xFFE2E8F0),
                     width: 1.0,
                   ),
                 ),
                 child: Icon(
                   Icons.assessment,
-                  color: const Color(0xFF4A5568), // Professional grey
+                  color: const Color(0xFF4A5568),
                   size: 28.8.sp,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 5.0.h),
+          SizedBox(height: 18.0.h),
           if (controller.todaysInspections.value?['status'] != null)
             _buildStatusCards(),
         ],
@@ -256,41 +253,72 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
     );
   }
 
+// 3. Updated _buildStatusCards method with all 4 status types:
+
   Widget _buildStatusCards() {
-    final status =
-        controller.todaysInspections.value!['status'] as Map<String, dynamic>;
-    return Row(
+    final status = controller.todaysInspections.value!['status'] as Map<String, dynamic>;
+
+    return Column(
       children: [
-        Expanded(
-          child: _buildStatusCard(
-            'Completed',
-            status['complete']?.toString() ?? '0',
-            const Color(0xFF48BB78), // Green
-            Icons.check_circle,
-          ),
+        // First row - Completed and Pending
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatusCard(
+                'Completed',
+                status['complete']?.toString() ?? '0',
+                const Color(0xFF48BB78), // Green
+                Icons.check_circle,
+              ),
+            ),
+            SizedBox(width: 10.8.w),
+            Expanded(
+              child: _buildStatusCard(
+                'Pending',
+                status['pending']?.toString() ?? '0',
+                const Color(0xFF718096), // Grey
+                Icons.schedule,
+              ),
+            ),
+          ],
         ),
-        SizedBox(width: 10.8.w),
-        Expanded(
-          child: _buildStatusCard(
-            'Pending',
-            status['pending']?.toString() ?? '0',
-            const Color(0xFF718096), // Grey
-            Icons.schedule,
-          ),
+        SizedBox(height: 10.8.h),
+        // Second row - Cleaning and Failed
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatusCard(
+                'Cleaning',
+                status['cleaning']?.toString() ?? '0',
+                const Color(0xFF3182CE), // Blue
+                Icons.cleaning_services,
+              ),
+            ),
+            SizedBox(width: 10.8.w),
+            Expanded(
+              child: _buildStatusCard(
+                'Failed',
+                status['failed']?.toString() ?? '0',
+                const Color(0xFFE53E3E), // Red
+                Icons.error,
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildStatusCard(
-      String title, String count, Color color, IconData icon) {
+// 4. The _buildStatusCard method remains the same:
+
+  Widget _buildStatusCard(String title, String count, Color color, IconData icon) {
     return Container(
       padding: EdgeInsets.all(14.4.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAFBFC), // Ultra light grey background
+        color: const Color(0xFFFAFBFC),
         borderRadius: BorderRadius.circular(10.8.r),
         border: Border.all(
-          color: const Color(0xFFEDF2F7), // Light grey border
+          color: const Color(0xFFEDF2F7),
           width: 1.0,
         ),
       ),
@@ -298,7 +326,7 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
         children: [
           Icon(
             icon,
-            color: color, // Use the passed color for the icon
+            color: color,
             size: 21.6.sp,
           ),
           SizedBox(height: 7.2.h),
@@ -307,7 +335,7 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
             style: TextStyle(
               fontSize: 18.0.sp,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF2D3748), // Professional dark grey
+              color: const Color(0xFF2D3748),
             ),
           ),
           SizedBox(height: 3.6.h),
@@ -315,7 +343,7 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
             title,
             style: TextStyle(
               fontSize: 10.8.sp,
-              color: const Color(0xFF718096), // Medium grey
+              color: const Color(0xFF718096),
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,

@@ -945,9 +945,7 @@ class InspectionFormStatus extends StatelessWidget {
       child: Obx(() => ElevatedButton(
         onPressed: controller.isSubmitting.value
             ? null
-            : () async {
-          await controller.submitInspectionReport(inspectionData);
-        },
+            : () => controller.submitInspectionReport(inspectionData),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue,
           shape: RoundedRectangleBorder(

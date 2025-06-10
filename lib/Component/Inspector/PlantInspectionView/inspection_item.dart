@@ -54,9 +54,14 @@ class _InspectionItemState extends State<InspectionItem> with SingleTickerProvid
     final status = widget.inspectionData['status']?.toString().toLowerCase() ?? '';
     switch (status) {
       case 'completed':
+      case 'done':  // Added this case
         return const Color(0xFF48BB78); // Professional green
       case 'pending':
         return const Color(0xFF718096); // Professional grey
+      case 'cleaning':
+        return const Color(0xFF3182CE); // Blue for cleaning
+      case 'failed':
+        return const Color(0xFFE53E3E); // Red for failed
       default:
         return const Color(0xFFA0AEC0); // Light grey for unknown
     }
@@ -66,9 +71,14 @@ class _InspectionItemState extends State<InspectionItem> with SingleTickerProvid
     final status = widget.inspectionData['status']?.toString().toLowerCase() ?? '';
     switch (status) {
       case 'completed':
+      case 'done':  // Added this case
         return 'Completed';
       case 'pending':
         return 'Pending';
+      case 'cleaning':
+        return 'Cleaning';
+      case 'failed':
+        return 'Failed';
       default:
         return 'Unknown';
     }
