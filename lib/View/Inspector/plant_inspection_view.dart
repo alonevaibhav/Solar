@@ -169,16 +169,16 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
 
   Widget _buildStatsSection() {
     return Container(
-      padding: EdgeInsets.all(18.0.w),
+      padding: EdgeInsets.all(16.0.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18.0.r),
+        borderRadius: BorderRadius.circular(16.0.r),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFE2E8F0).withOpacity(0.8),
-            blurRadius: 12.0,
-            offset: const Offset(0, 4.0),
-            spreadRadius: 1.0,
+            color: const Color(0xFFE2E8F0).withOpacity(0.6),
+            blurRadius: 8.0,
+            offset: const Offset(0, 2.0),
+            spreadRadius: 0.5,
           ),
         ],
         border: Border.all(
@@ -189,167 +189,185 @@ class PlantInspectionView extends GetView<PlantInspectionController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Compact header section
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Today's Inspections",
-                    style: TextStyle(
-                      fontSize: 16.2.sp,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF2D3748),
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.0.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF7FAFC),
+                        borderRadius: BorderRadius.circular(8.0.r),
+                      ),
+                      child: Icon(
+                        Icons.assessment,
+                        color: const Color(0xFF4A5568),
+                        size: 20.0.sp,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 7.2.h),
-                  Row(
-                    children: [
-                      Text(
-                        controller.todaysInspections.value?['count']?.toString() ?? '0',
-                        style: TextStyle(
-                          fontSize: 32.4.sp,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1A202C),
-                        ),
+                    SizedBox(width: 12.0.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Today's Inspections",
+                            style: TextStyle(
+                              fontSize: 14.0.sp,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF2D3748),
+                            ),
+                          ),
+                          SizedBox(height: 2.0.h),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                controller.todaysInspections.value?['count']?.toString() ?? '0',
+                                style: TextStyle(
+                                  fontSize: 24.0.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF1A202C),
+                                ),
+                              ),
+                              SizedBox(width: 4.0.w),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 2.0.h),
+                                child: Text(
+                                  'Total',
+                                  style: TextStyle(
+                                    fontSize: 12.0.sp,
+                                    color: const Color(0xFF718096),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 7.2.w),
-                      Text(
-                        'Total',
-                        style: TextStyle(
-                          fontSize: 14.4.sp,
-                          color: const Color(0xFF718096),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.all(14.4.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF7FAFC),
-                  borderRadius: BorderRadius.circular(14.4.r),
-                  border: Border.all(
-                    color: const Color(0xFFE2E8F0),
-                    width: 1.0,
-                  ),
-                ),
-                child: Icon(
-                  Icons.assessment,
-                  color: const Color(0xFF4A5568),
-                  size: 28.8.sp,
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 18.0.h),
-          if (controller.todaysInspections.value?['status'] != null)
-            _buildStatusCards(),
+
+          // Status cards section - more compact
+          if (controller.todaysInspections.value?['status'] != null) ...[
+            SizedBox(height: 12.0.h),
+            _buildCompactStatusCards(),
+          ],
         ],
       ),
     );
   }
 
-// 3. Updated _buildStatusCards method with all 4 status types:
-
-  Widget _buildStatusCards() {
+  Widget _buildCompactStatusCards() {
     final status = controller.todaysInspections.value!['status'] as Map<String, dynamic>;
 
-    return Column(
-      children: [
-        // First row - Completed and Pending
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatusCard(
-                'Completed',
-                status['complete']?.toString() ?? '0',
-                const Color(0xFF48BB78), // Green
-                Icons.check_circle,
-              ),
-            ),
-            SizedBox(width: 10.8.w),
-            Expanded(
-              child: _buildStatusCard(
-                'Pending',
-                status['pending']?.toString() ?? '0',
-                const Color(0xFF718096), // Grey
-                Icons.schedule,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 10.8.h),
-        // Second row - Cleaning and Failed
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatusCard(
-                'Cleaning',
-                status['cleaning']?.toString() ?? '0',
-                const Color(0xFF3182CE), // Blue
-                Icons.cleaning_services,
-              ),
-            ),
-            SizedBox(width: 10.8.w),
-            Expanded(
-              child: _buildStatusCard(
-                'Failed',
-                status['failed']?.toString() ?? '0',
-                const Color(0xFFE53E3E), // Red
-                Icons.error,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-// 4. The _buildStatusCard method remains the same:
-
-  Widget _buildStatusCard(String title, String count, Color color, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(14.4.w),
+      padding: EdgeInsets.all(12.0.w),
       decoration: BoxDecoration(
         color: const Color(0xFFFAFBFC),
-        borderRadius: BorderRadius.circular(10.8.r),
+        borderRadius: BorderRadius.circular(12.0.r),
         border: Border.all(
           color: const Color(0xFFEDF2F7),
           width: 1.0,
         ),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 21.6.sp,
-          ),
-          SizedBox(height: 7.2.h),
-          Text(
-            count,
-            style: TextStyle(
-              fontSize: 18.0.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF2D3748),
+          Expanded(
+            child: _buildCompactStatusItem(
+              'Complete',
+              status['complete']?.toString() ?? '0',
+              const Color(0xFF48BB78),
+              Icons.check_circle_outline,
             ),
           ),
-          SizedBox(height: 3.6.h),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10.8.sp,
-              color: const Color(0xFF718096),
-              fontWeight: FontWeight.w500,
+          Container(
+            width: 1,
+            height: 30.h,
+            color: const Color(0xFFE2E8F0),
+            margin: EdgeInsets.symmetric(horizontal: 8.0.w),
+          ),
+          Expanded(
+            child: _buildCompactStatusItem(
+              'Pending',
+              status['pending']?.toString() ?? '0',
+              const Color(0xFF718096),
+              Icons.schedule_outlined,
             ),
-            textAlign: TextAlign.center,
+          ),
+          Container(
+            width: 1,
+            height: 30.h,
+            color: const Color(0xFFE2E8F0),
+            margin: EdgeInsets.symmetric(horizontal: 8.0.w),
+          ),
+          Expanded(
+            child: _buildCompactStatusItem(
+              'Cleaning',
+              status['cleaning']?.toString() ?? '0',
+              const Color(0xFF3182CE),
+              Icons.cleaning_services_outlined,
+            ),
+          ),
+          Container(
+            width: 1,
+            height: 30.h,
+            color: const Color(0xFFE2E8F0),
+            margin: EdgeInsets.symmetric(horizontal: 8.0.w),
+          ),
+          Expanded(
+            child: _buildCompactStatusItem(
+              'Failed',
+              status['failed']?.toString() ?? '0',
+              const Color(0xFFE53E3E),
+              Icons.error_outline,
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCompactStatusItem(String title, String count, Color color, IconData icon) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          color: color,
+          size: 16.0.sp,
+        ),
+        SizedBox(height: 4.0.h),
+        Text(
+          count,
+          style: TextStyle(
+            fontSize: 16.0.sp,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF2D3748),
+          ),
+        ),
+        SizedBox(height: 2.0.h),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 9.0.sp,
+            color: const Color(0xFF718096),
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 
