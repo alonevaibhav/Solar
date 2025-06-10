@@ -258,42 +258,6 @@ class TicketCardWidget extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 6.4.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () => onCallPressed(ticket['phone'] ?? ''),
-                      child: Container(
-                        padding: EdgeInsets.all(4.8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.phone,
-                          color: Colors.white,
-                          size: 14.4.sp,
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () => onNavigatePressed(ticket['location'] ?? ''),
-                      child: Container(
-                        padding: EdgeInsets.all(4.8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.navigation,
-                          color: Colors.white,
-                          size: 14.4.sp,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),

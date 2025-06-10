@@ -12,10 +12,7 @@ class AreaInspectionView extends GetView<AreaInspectionController> {
 
   @override
   Widget build(BuildContext context) {
-    // // This triggers the fetchCleanerReport() only once after first build
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchCleanerReport(); // Call your separate function here
-    // });
+
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
