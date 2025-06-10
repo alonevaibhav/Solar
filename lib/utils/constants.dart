@@ -30,7 +30,7 @@ String getInspectorDataByID(int inspectionCardId) => "/api/report/cleaner-report
 
 String getUpdateInspectorDataEndpoint(int inspectionCardId) => "/api/report/cleaner-reports/inspector/$inspectionCardId";
 
-String submitInspectionReport = "/api/report/cleaner-reports";
+String raiseTicket = "/api/tickets/create/inspector";
 
 
 
