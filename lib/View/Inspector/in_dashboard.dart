@@ -9,7 +9,6 @@ import '../../Controller/Inspector/plant_inspection_controller.dart';
 import '../../Controller/Inspector/ticket_controller.dart';
 import '../../Controller/Inspector/user_profile_controller.dart';
 import '../../utils/exit.dart';
-import '../User/no used.dart';
 import 'SheduleModule/shedule_view.dart';
 import 'area_inspection_view.dart';
 import 'bottom_nevigation.dart';

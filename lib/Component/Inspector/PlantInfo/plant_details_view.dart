@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../Route Manager/app_routes.dart';
 
 class InfoPlantDetailsView extends StatelessWidget {
@@ -619,7 +618,7 @@ class InfoPlantDetailsView extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            Get.toNamed(AppRoutes.inspectorCreateTicket);
+            Get.toNamed(AppRoutes.inspectorCreateTicket, arguments: Get.arguments);
           },
           borderRadius: BorderRadius.circular(25.r),
           child: Container(
