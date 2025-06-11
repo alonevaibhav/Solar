@@ -461,6 +461,7 @@ class TicketController extends GetxController {
   final isLoading = false.obs;
   final errorMessage = Rxn<String>();
 
+
   // Separate storage for different ticket types
   final allTickets = <Map<String, dynamic>>[].obs;
   final myTickets = <Map<String, dynamic>>[].obs;
