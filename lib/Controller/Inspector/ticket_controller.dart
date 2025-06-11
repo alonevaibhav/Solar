@@ -2,22 +2,22 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
+// import '../../API Service/Model/Request/ticket_model.dart';
+// import '../../API Service/api_service.dart';
 //
 // class TicketController extends GetxController {
 //   // Observable variables for reactive state
 //   final isLoading = false.obs;
 //   final errorMessage = Rxn<String>();
 //
-//   // Direct storage of ticket data as Map<String, dynamic>
-//   final tickets = <Map<String, dynamic>>[].obs;
+//
+//   // Separate storage for different ticket types
+//   final allTickets = <Map<String, dynamic>>[].obs;
+//   final myTickets = <Map<String, dynamic>>[].obs;
 //   final filteredTickets = <Map<String, dynamic>>[].obs;
 //
+//   // Tab management
 //   var selectedTicketTab = 'all'.obs;
-//   void setTicketTab(String tab) {
-//     selectedTicketTab.value = tab;
-//     // Add logic to filter tickets based on tab selection
-//     // For example: filter by user ID for 'my' tickets
-//   }
 //
 //   // Search and filter states
 //   final searchQuery = ''.obs;
@@ -45,8 +45,9 @@
 //   @override
 //   void onInit() {
 //     super.onInit();
-//     // Initialize data
-//     fetchTickets();
+//     // Initialize data - load both types
+//     fetchAllTickets();
+//     fetchMyTickets();
 //
 //     // Set up reactive search
 //     debounce(
@@ -57,20 +58,33 @@
 //
 //     // React to filter changes
 //     ever(selectedFilter, (_) => applyFilters());
+//
+//     // React to tab changes
+//     ever(selectedTicketTab, (_) => applyFilters());
 //   }
 //
 //   @override
 //   void onReady() {
 //     super.onReady();
-//     // Additional setup after the widget is rendered
 //   }
 //
 //   @override
 //   void onClose() {
-//     // Clean up resources
 //     messageController.dispose();
 //     remarkController.dispose();
 //     super.onClose();
+//   }
+//
+//   // Set ticket tab and refresh data
+//   void setTicketTab(String tab) {
+//     selectedTicketTab.value = tab;
+//
+//     // Optionally refetch data when switching tabs
+//     if (tab == 'all' && allTickets.isEmpty) {
+//       fetchAllTickets();
+//     } else if (tab == 'my' && myTickets.isEmpty) {
+//       fetchMyTickets();
+//     }
 //   }
 //
 //   // Set search query
@@ -88,25 +102,29 @@
 //     showFilters.value = !showFilters.value;
 //   }
 //
-//   // Apply filters to the ticket list
+//   // Apply filters to the current ticket list
 //   void applyFilters() {
-//     if (tickets.isEmpty) return;
+//     // Get current data source based on selected tab
+//     List<Map<String, dynamic>> currentTickets = selectedTicketTab.value == 'all'
+//         ? allTickets
+//         : myTickets;
 //
-//     // Start with all tickets
-//     List<Map<String, dynamic>> result = List.from(tickets);
+//     if (currentTickets.isEmpty) {
+//       filteredTickets.clear();
+//       return;
+//     }
+//
+//     // Start with current tickets
+//     List<Map<String, dynamic>> result = List.from(currentTickets);
 //
 //     // Apply search filter if query is not empty
 //     if (searchQuery.value.isNotEmpty) {
 //       final query = searchQuery.value.toLowerCase();
 //       result = result.where((ticket) {
-//         return (ticket['title']?.toString().toLowerCase().contains(query) ??
-//             false) ||
-//             (ticket['description']?.toString().toLowerCase().contains(query) ??
-//                 false) ||
-//             (ticket['name']?.toString().toLowerCase().contains(query) ??
-//                 false) ||
-//             (ticket['location']?.toString().toLowerCase().contains(query) ??
-//                 false);
+//         return (ticket['title']?.toString().toLowerCase().contains(query) ?? false) ||
+//             (ticket['description']?.toString().toLowerCase().contains(query) ?? false) ||
+//             (ticket['name']?.toString().toLowerCase().contains(query) ?? false) ||
+//             (ticket['location']?.toString().toLowerCase().contains(query) ?? false);
 //       }).toList();
 //     }
 //
@@ -114,20 +132,16 @@
 //     if (selectedFilter.value != 'All') {
 //       switch (selectedFilter.value) {
 //         case 'Priority High':
-//           result =
-//               result.where((ticket) => ticket['priority'] == 'high').toList();
+//           result = result.where((ticket) => ticket['priority'] == 'high').toList();
 //           break;
 //         case 'Priority Low':
-//           result =
-//               result.where((ticket) => ticket['priority'] == 'low').toList();
+//           result = result.where((ticket) => ticket['priority'] == 'low').toList();
 //           break;
 //         case 'Ticket Open':
-//           result =
-//               result.where((ticket) => ticket['status'] == 'open').toList();
+//           result = result.where((ticket) => ticket['status'] == 'open').toList();
 //           break;
 //         case 'Ticket Closed':
-//           result =
-//               result.where((ticket) => ticket['status'] == 'closed').toList();
+//           result = result.where((ticket) => ticket['status'] == 'closed').toList();
 //           break;
 //       }
 //     }
@@ -136,121 +150,173 @@
 //     filteredTickets.value = result;
 //   }
 //
-//   // Fetch tickets from API
-//   Future<void> fetchTickets() async {
+//   // Fetch ALL tickets from API
+//   Future<void> fetchAllTickets() async {
 //     try {
 //       isLoading.value = true;
 //       errorMessage.value = null;
 //
-//       // Mock API call - replace with actual API call
-//       await Future.delayed(const Duration(seconds: 1));
+//       final inspectorId = await ApiService.getUid();
 //
-//       // Sample mock data based on the provided screenshots
-//       final response = [
-//         {
-//           'id': '1',
-//           'title': 'Network Issue',
-//           'description': 'Unable to connect to server',
-//           'assignedTo': 'Tech Support',
-//           'priority': 'high',
-//           'status': 'closed',
-//           'remark': 'Server restarted',
-//           'name': 'John',
-//           'phone': '+91 9876543210',
-//           'opened': '20/2/25 2:25Pm',
-//           'closed': '20/2/25 2:25Pm',
-//           'location': 'XYZ-1 Pune Maharashtra(411052)',
-//           'plantName': 'Abc Plant Name',
-//           'autoClean': 'hh:mm',
-//           'ownerName': 'Owner Name',
-//           'ownerPhone': '+91 8003373561'
-//         },
-//         {
-//           'id': '2',
-//           'title': 'Software Update',
-//           'description': 'Need to update application',
-//           'assignedTo': 'Dev Team',
-//           'priority': 'low',
-//           'status': 'open',
-//           'remark': 'Pending approval',
-//           'name': 'John',
-//           'phone': '+91 9876543210',
-//           'opened': '20/2/25 2:25Pm',
-//           'closed': '',
-//           'location': 'XYZ-1 Pune Maharashtra(411052)',
-//           'plantName': 'Abc Plant Name',
-//           'autoClean': 'hh:mm',
-//           'ownerName': 'Owner Name',
-//           'ownerPhone': '+91 8003373561'
-//         },
-//         {
-//           'id': '3',
-//           'title': 'Hardware Replacement',
-//           'description': 'Keyboard not working',
-//           'assignedTo': 'Hardware Team',
-//           'priority': 'high',
-//           'status': 'open',
-//           'remark': 'Ordered replacement',
-//           'name': 'Sarah',
-//           'phone': '+91 9876543211',
-//           'opened': '19/2/25 10:15Am',
-//           'closed': '',
-//           'location': 'ABC-2 Mumbai Maharashtra(400001)',
-//           'plantName': 'Abc Plant Name',
-//           'autoClean': 'hh:mm',
-//           'ownerName': 'Owner Name',
-//           'ownerPhone': '+91 8003373561'
-//         },
-//         {
-//           'id': '4',
-//           'title': 'Access Request',
-//           'description': 'Need access to database',
-//           'assignedTo': 'Admin',
-//           'priority': 'low',
-//           'status': 'closed',
-//           'remark': 'Access granted',
-//           'name': 'Mike',
-//           'phone': '+91 9876543212',
-//           'opened': '18/2/25 9:30Am',
-//           'closed': '18/2/25 2:45Pm',
-//           'location': 'DEF-3 Bangalore Karnataka(560001)',
-//           'plantName': 'Abc Plant Name',
-//           'autoClean': 'hh:mm',
-//           'ownerName': 'Owner Name',
-//           'ownerPhone': '+91 8003373561'
-//         },
-//       ];
+//       if (inspectorId == null) {
+//         throw Exception('No UID found');
+//       }
 //
-//       tickets.value = response;
-//
-//       // Apply initial filters
-//       applyFilters();
-//     } catch (e) {
-//       errorMessage.value = 'Failed to load tickets: ${e.toString()}';
-//       Get.snackbar(
-//         'Error',
-//         'Failed to load tickets',
-//         snackPosition: SnackPosition.BOTTOM,
-//         backgroundColor: Colors.red,
-//         colorText: Colors.white,
+//       final response = await ApiService.get<TicketsResponse>(
+//         endpoint: "/api/tickets/inspector/$inspectorId",
+//         fromJson: (json) => TicketsResponse.fromJson(json),
 //       );
+//
+//       if (response.success && response.data != null) {
+//         allTickets.value = response.data!.tickets.map((ticket) {
+//           return {
+//             'id': ticket.id.toString(),
+//             'title': ticket.title,
+//             'description': ticket.description,
+//             'plant_id': ticket.plantId,
+//             'user_id': ticket.userId,
+//             'inspector_id': ticket.inspectorId,
+//             'distributor_admin_id': ticket.distributorAdminId,
+//             'department': ticket.department,
+//             'created_by': ticket.createdBy,
+//             'creator_type': ticket.creatorType,
+//             'ticket_type': ticket.ticketType,
+//             'cleaning_id': ticket.cleaningId,
+//             'status': ticket.status,
+//             'createdAt': ticket.createdAt.toString(),
+//             'updatedAt': ticket.updatedAt.toString(),
+//             'priority': ticket.priority == '2' ? 'high' : 'low',
+//             'assigned_to': ticket.assignedTo,
+//             'ip': ticket.ip,
+//             'creator_name': ticket.creatorName,
+//             'inspector_assigned': ticket.inspectorAssigned,
+//             'chat_count': ticket.chatCount,
+//             'location': 'Location details', // Placeholder, update as needed
+//             'phone': 'Phone details', // Placeholder, update as needed
+//             'remark': 'Remark details', // Placeholder, update as needed
+//           };
+//         }).toList();
+//
+//         if (selectedTicketTab.value == 'all') {
+//           applyFilters();
+//         }
+//       } else {
+//         errorMessage.value = response.errorMessage ?? 'Failed to load all tickets';
+//       }
+//     } catch (e) {
+//       errorMessage.value = 'Failed to load all tickets: ${e.toString()}';
 //     } finally {
 //       isLoading.value = false;
 //     }
 //   }
 //
-//   // Refresh ticket list
-//   Future<void> refreshTickets() async {
-//     await fetchTickets();
+//   Future<void> fetchMyTickets() async {
+//     try {
+//       isLoading.value = true;
+//       errorMessage.value = null;
+//
+//       final inspectorId = await ApiService.getUid();
+//
+//       if (inspectorId == null) {
+//         throw Exception('No UID found');
+//       }
+//
+//       final response = await ApiService.get<TicketsResponse>(
+//         endpoint: "/api/tickets/created-by-inspector/$inspectorId",
+//         fromJson: (json) => TicketsResponse.fromJson(json),
+//       );
+//
+//       if (response.success && response.data != null) {
+//         myTickets.value = response.data!.tickets.map((ticket) {
+//           return {
+//             'id': ticket.id.toString(),
+//             'title': ticket.title,
+//             'description': ticket.description,
+//             'plant_id': ticket.plantId,
+//             'user_id': ticket.userId,
+//             'inspector_id': ticket.inspectorId,
+//             'distributor_admin_id': ticket.distributorAdminId,
+//             'department': ticket.department,
+//             'created_by': ticket.createdBy,
+//             'creator_type': ticket.creatorType,
+//             'ticket_type': ticket.ticketType,
+//             'cleaning_id': ticket.cleaningId,
+//             'status': ticket.status,
+//             'createdAt': ticket.createdAt.toString(),
+//             'updatedAt': ticket.updatedAt.toString(),
+//             'priority': ticket.priority == '2' ? 'high' : 'low',
+//             'assigned_to': ticket.assignedTo,
+//             'ip': ticket.ip,
+//             'creator_name': ticket.creatorName,
+//             'inspector_assigned': ticket.inspectorAssigned,
+//             'chat_count': ticket.chatCount,
+//             'location': 'Location details', // Placeholder, update as needed
+//             'phone': 'Phone details', // Placeholder, update as needed
+//             'remark': 'Remark details', // Placeholder, update as needed
+//           };
+//         }).toList();
+//
+//         if (selectedTicketTab.value == 'my') {
+//           applyFilters();
+//         }
+//       } else {
+//         errorMessage.value = response.errorMessage ?? 'Failed to load my tickets';
+//       }
+//     } catch (e) {
+//       errorMessage.value = 'Failed to load my tickets: ${e.toString()}';
+//     } finally {
+//       isLoading.value = false;
+//     }
 //   }
 //
-//   // Get ticket details
+//
+//
+//   // Fetch tickets (legacy method - now calls both)
+//   Future<void> fetchTickets() async {
+//     await Future.wait([
+//       fetchAllTickets(),
+//       fetchMyTickets(),
+//     ]);
+//   }
+//
+//   // Refresh ticket list based on current tab
+//   Future<void> refreshTickets() async {
+//     if (selectedTicketTab.value == 'all') {
+//       await fetchAllTickets();
+//     } else {
+//       await fetchMyTickets();
+//     }
+//   }
+//
+//   // Refresh both ticket lists
+//   Future<void> refreshAllTickets() async {
+//     await Future.wait([
+//       fetchAllTickets(),
+//       fetchMyTickets(),
+//     ]);
+//   }
+//
+//   // Get current tickets based on selected tab
+//   List<Map<String, dynamic>> get currentTickets {
+//     return selectedTicketTab.value == 'all' ? allTickets : myTickets;
+//   }
+//
+//   // Get ticket details from current data source
 //   Map<String, dynamic>? getTicketDetails(String id) {
 //     try {
-//       return tickets.firstWhere((ticket) => ticket['id'] == id);
+//       return currentTickets.firstWhere((ticket) => ticket['id'] == id);
 //     } catch (e) {
-//       errorMessage.value = 'Ticket not found';
-//       return null;
+//       // Try searching in both lists
+//       try {
+//         return allTickets.firstWhere((ticket) => ticket['id'] == id);
+//       } catch (e) {
+//         try {
+//           return myTickets.firstWhere((ticket) => ticket['id'] == id);
+//         } catch (e) {
+//           errorMessage.value = 'Ticket not found';
+//           return null;
+//         }
+//       }
 //     }
 //   }
 //
@@ -265,7 +331,6 @@
 //
 //   // Call the ticket contact
 //   void callContact(String phoneNumber) {
-//     // In a real app, you would use url_launcher to make a phone call
 //     Get.snackbar(
 //       'Calling',
 //       'Calling $phoneNumber',
@@ -275,7 +340,6 @@
 //
 //   // Navigate to location
 //   void navigateToLocation(String location) {
-//     // In a real app, you would use maps integration
 //     Get.snackbar(
 //       'Navigation',
 //       'Navigating to $location',
@@ -285,9 +349,7 @@
 //
 //   // Send a message in the ticket detail view
 //   Future<void> sendMessage() async {
-//     if (messageController.text
-//         .trim()
-//         .isEmpty) {
+//     if (messageController.text.trim().isEmpty) {
 //       Get.snackbar(
 //         'Error',
 //         'Please enter a message',
@@ -298,18 +360,14 @@
 //
 //     try {
 //       isLoading.value = true;
-//
-//       // Mock API call - replace with actual API call
 //       await Future.delayed(Duration(seconds: 1));
 //
-//       // In a real app, you would send the message to the API
 //       Get.snackbar(
 //         'Success',
 //         'Message sent successfully',
 //         snackPosition: SnackPosition.BOTTOM,
 //       );
 //
-//       // Clear the message input
 //       messageController.clear();
 //     } catch (e) {
 //       errorMessage.value = 'Failed to send message: ${e.toString()}';
@@ -327,9 +385,7 @@
 //
 //   // Add a remark to the ticket
 //   Future<void> addRemark() async {
-//     if (remarkController.text
-//         .trim()
-//         .isEmpty) {
+//     if (remarkController.text.trim().isEmpty) {
 //       Get.snackbar(
 //         'Error',
 //         'Please enter a remark',
@@ -340,21 +396,25 @@
 //
 //     try {
 //       isLoading.value = true;
-//
-//       // Mock API call - replace with actual API call
 //       await Future.delayed(Duration(seconds: 1));
 //
-//       // In a real app, you would update the ticket with the new remark
 //       if (currentTicket.value != null) {
 //         final updatedTicket = Map<String, dynamic>.from(currentTicket.value!);
 //         updatedTicket['remark'] = remarkController.text;
 //
-//         // Update the ticket in the list
-//         final index = tickets.indexWhere((t) => t['id'] == updatedTicket['id']);
-//         if (index != -1) {
-//           tickets[index] = updatedTicket;
-//           currentTicket.value = updatedTicket;
+//         // Update in both lists if present
+//         final allIndex = allTickets.indexWhere((t) => t['id'] == updatedTicket['id']);
+//         if (allIndex != -1) {
+//           allTickets[allIndex] = updatedTicket;
 //         }
+//
+//         final myIndex = myTickets.indexWhere((t) => t['id'] == updatedTicket['id']);
+//         if (myIndex != -1) {
+//           myTickets[myIndex] = updatedTicket;
+//         }
+//
+//         currentTicket.value = updatedTicket;
+//         applyFilters(); // Refresh filtered list
 //
 //         Get.snackbar(
 //           'Success',
@@ -362,7 +422,6 @@
 //           snackPosition: SnackPosition.BOTTOM,
 //         );
 //
-//         // Clear the remark input
 //         remarkController.clear();
 //       }
 //     } catch (e) {
@@ -390,7 +449,6 @@
 //       return;
 //     }
 //
-//     // Check if ticket is already open
 //     if (currentTicket.value!['status'] == 'open') {
 //       Get.snackbar(
 //         'Information',
@@ -402,30 +460,31 @@
 //
 //     try {
 //       isLoading.value = true;
-//
-//       // Mock API call - replace with actual API call
 //       await Future.delayed(Duration(seconds: 1));
 //
-//       // Update the ticket status to open
 //       final updatedTicket = Map<String, dynamic>.from(currentTicket.value!);
 //       updatedTicket['status'] = 'open';
 //       updatedTicket['closed'] = '';
 //
-//       // Update the ticket in the list
-//       final index = tickets.indexWhere((t) => t['id'] == updatedTicket['id']);
-//       if (index != -1) {
-//         tickets[index] = updatedTicket;
-//         currentTicket.value = updatedTicket;
+//       // Update in both lists if present
+//       final allIndex = allTickets.indexWhere((t) => t['id'] == updatedTicket['id']);
+//       if (allIndex != -1) {
+//         allTickets[allIndex] = updatedTicket;
 //       }
+//
+//       final myIndex = myTickets.indexWhere((t) => t['id'] == updatedTicket['id']);
+//       if (myIndex != -1) {
+//         myTickets[myIndex] = updatedTicket;
+//       }
+//
+//       currentTicket.value = updatedTicket;
+//       applyFilters(); // Refresh filtered list
 //
 //       Get.snackbar(
 //         'Success',
 //         'Ticket reopened successfully',
 //         snackPosition: SnackPosition.BOTTOM,
 //       );
-//
-//       // Apply filters to update the filtered list
-//       applyFilters();
 //     } catch (e) {
 //       errorMessage.value = 'Failed to reopen ticket: ${e.toString()}';
 //       Get.snackbar(
@@ -447,76 +506,115 @@
 //       'Generating ticket image...',
 //       snackPosition: SnackPosition.BOTTOM,
 //     );
-//     // In a real app, you would generate an image of the ticket
-//     // and allow the user to download or share it
 //   }
 // }
 
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../API Service/Model/Request/ticket_model.dart';
+import '../../API Service/api_service.dart';
 
 class TicketController extends GetxController {
-  // Observable variables for reactive state
   final isLoading = false.obs;
   final errorMessage = Rxn<String>();
 
-
-  // Separate storage for different ticket types
   final allTickets = <Map<String, dynamic>>[].obs;
   final myTickets = <Map<String, dynamic>>[].obs;
   final filteredTickets = <Map<String, dynamic>>[].obs;
 
-  // Tab management
   var selectedTicketTab = 'all'.obs;
 
-  // Search and filter states
   final searchQuery = ''.obs;
   final selectedFilter = 'All'.obs;
 
-  // Filter visibility control
   final showFilters = false.obs;
 
-  // Text controllers for ticket detail page
   final messageController = TextEditingController();
   final remarkController = TextEditingController();
 
-  // Current ticket data for detail page
   final currentTicket = Rxn<Map<String, dynamic>>();
 
-  // Filter options
+  final Map<String, String> priorityLabels = {
+    '1': 'Critical',
+    '2': 'High',
+    '3': 'Medium',
+    '4': 'Low',
+    '5': 'Very Low'
+  };
+
   final filterOptions = [
     'All',
-    'Priority High',
-    'Priority Low',
     'Ticket Open',
     'Ticket Closed',
+    'Priority Critical',
+    'Priority High',
+    'Priority Medium',
+    'Priority Low',
+    'Priority Very Low',
   ];
+
+  Map<String, dynamic> _getPriorityData(String priority) {
+    switch (priority) {
+      case '1':
+        return {
+          'label': 'Critical',
+          'description': 'Urgent attention required',
+          'color': const Color(0xFFDC2626),
+          'icon': Icons.error,
+        };
+      case '2':
+        return {
+          'label': 'High',
+          'description': 'High priority issue',
+          'color': const Color(0xFFEA580C),
+          'icon': Icons.warning,
+        };
+      case '3':
+        return {
+          'label': 'Medium',
+          'description': 'Normal priority',
+          'color': const Color(0xFFCA8A04),
+          'icon': Icons.info,
+        };
+      case '4':
+        return {
+          'label': 'Low',
+          'description': 'Low priority issue',
+          'color': const Color(0xFF059669),
+          'icon': Icons.schedule,
+        };
+      case '5':
+        return {
+          'label': 'Very Low',
+          'description': 'Minimal impact',
+          'color': const Color(0xFF0284C7),
+          'icon': Icons.remove,
+        };
+      default:
+        return {
+          'label': 'Medium',
+          'description': 'Normal priority',
+          'color': const Color(0xFFCA8A04),
+          'icon': Icons.info,
+        };
+    }
+  }
 
   @override
   void onInit() {
     super.onInit();
-    // Initialize data - load both types
     fetchAllTickets();
     fetchMyTickets();
 
-    // Set up reactive search
     debounce(
       searchQuery,
           (_) => applyFilters(),
       time: const Duration(milliseconds: 500),
     );
 
-    // React to filter changes
     ever(selectedFilter, (_) => applyFilters());
-
-    // React to tab changes
     ever(selectedTicketTab, (_) => applyFilters());
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
   }
 
   @override
@@ -526,11 +624,9 @@ class TicketController extends GetxController {
     super.onClose();
   }
 
-  // Set ticket tab and refresh data
   void setTicketTab(String tab) {
     selectedTicketTab.value = tab;
 
-    // Optionally refetch data when switching tabs
     if (tab == 'all' && allTickets.isEmpty) {
       fetchAllTickets();
     } else if (tab == 'my' && myTickets.isEmpty) {
@@ -538,24 +634,19 @@ class TicketController extends GetxController {
     }
   }
 
-  // Set search query
   void setSearchQuery(String query) {
     searchQuery.value = query;
   }
 
-  // Set selected filter
   void setSelectedFilter(String filter) {
     selectedFilter.value = filter;
   }
 
-  // Toggle filter options visibility
   void toggleFilterVisibility() {
     showFilters.value = !showFilters.value;
   }
 
-  // Apply filters to the current ticket list
   void applyFilters() {
-    // Get current data source based on selected tab
     List<Map<String, dynamic>> currentTickets = selectedTicketTab.value == 'all'
         ? allTickets
         : myTickets;
@@ -565,10 +656,8 @@ class TicketController extends GetxController {
       return;
     }
 
-    // Start with current tickets
     List<Map<String, dynamic>> result = List.from(currentTickets);
 
-    // Apply search filter if query is not empty
     if (searchQuery.value.isNotEmpty) {
       final query = searchQuery.value.toLowerCase();
       result = result.where((ticket) {
@@ -579,196 +668,153 @@ class TicketController extends GetxController {
       }).toList();
     }
 
-    // Apply category filter
     if (selectedFilter.value != 'All') {
       switch (selectedFilter.value) {
-        case 'Priority High':
-          result = result.where((ticket) => ticket['priority'] == 'high').toList();
-          break;
-        case 'Priority Low':
-          result = result.where((ticket) => ticket['priority'] == 'low').toList();
-          break;
         case 'Ticket Open':
           result = result.where((ticket) => ticket['status'] == 'open').toList();
           break;
         case 'Ticket Closed':
           result = result.where((ticket) => ticket['status'] == 'closed').toList();
           break;
+        case 'Priority Critical':
+          result = result.where((ticket) => ticket['priority'] == '1').toList();
+          break;
+        case 'Priority High':
+          result = result.where((ticket) => ticket['priority'] == '2').toList();
+          break;
+        case 'Priority Medium':
+          result = result.where((ticket) => ticket['priority'] == '3').toList();
+          break;
+        case 'Priority Low':
+          result = result.where((ticket) => ticket['priority'] == '4').toList();
+          break;
+        case 'Priority Very Low':
+          result = result.where((ticket) => ticket['priority'] == '5').toList();
+          break;
       }
     }
 
-    // Update filtered tickets
     filteredTickets.value = result;
   }
 
-  // Fetch ALL tickets from API
   Future<void> fetchAllTickets() async {
     try {
       isLoading.value = true;
       errorMessage.value = null;
 
-      // Replace with your actual API call
-      // Example: final response = await ApiService.getAllTickets();
+      final inspectorId = await ApiService.getUid();
 
-      // Mock API call
-      await Future.delayed(const Duration(seconds: 1));
+      if (inspectorId == null) {
+        throw Exception('No UID found');
+      }
 
-      // Sample mock data for ALL tickets
-      final response = [
-        {
-          'id': '1',
-          'title': 'Network Issue',
-          'description': 'Unable to connect to server',
-          'assignedTo': 'Tech Support',
-          'priority': 'high',
-          'status': 'closed',
-          'remark': 'Server restarted',
-          'name': 'John',
-          'phone': '+91 9876543210',
-          'opened': '20/2/25 2:25Pm',
-          'closed': '20/2/25 2:25Pm',
-          'location': 'XYZ-1 Pune Maharashtra(411052)',
-          'plantName': 'Abc Plant Name',
-          'autoClean': 'hh:mm',
-          'ownerName': 'Owner Name',
-          'ownerPhone': '+91 8003373561',
-          'assignedBy': 'Admin'
-        },
-        {
-          'id': '2',
-          'title': 'Software Update',
-          'description': 'Need to update application',
-          'assignedTo': 'Dev Team',
-          'priority': 'low',
-          'status': 'open',
-          'remark': 'Pending approval',
-          'name': 'Sarah',
-          'phone': '+91 9876543210',
-          'opened': '20/2/25 2:25Pm',
-          'closed': '',
-          'location': 'XYZ-1 Pune Maharashtra(411052)',
-          'plantName': 'Abc Plant Name',
-          'autoClean': 'hh:mm',
-          'ownerName': 'Owner Name',
-          'ownerPhone': '+91 8003373561',
-          'assignedBy': 'Manager'
-        },
-        {
-          'id': '3',
-          'title': 'Hardware Replacement',
-          'description': 'Keyboard not working',
-          'assignedTo': 'Hardware Team',
-          'priority': 'high',
-          'status': 'open',
-          'remark': 'Ordered replacement',
-          'name': 'Mike',
-          'phone': '+91 9876543211',
-          'opened': '19/2/25 10:15Am',
-          'closed': '',
-          'location': 'ABC-2 Mumbai Maharashtra(400001)',
-          'plantName': 'Xyz Plant Name',
-          'autoClean': 'hh:mm',
-          'ownerName': 'Owner Name',
-          'ownerPhone': '+91 8003373561',
-          'assignedBy': 'Admin'
-        },
-      ];
+      final response = await ApiService.get<TicketsResponse>(
+        endpoint: "/api/tickets/inspector/$inspectorId",
+        fromJson: (json) => TicketsResponse.fromJson(json),
+      );
 
-      allTickets.value = response;
+      if (response.success && response.data != null) {
+        allTickets.value = response.data!.tickets.map((ticket) {
+          return {
+            'id': ticket.id.toString(),
+            'title': ticket.title,
+            'description': ticket.description,
+            'plant_id': ticket.plantId,
+            'user_id': ticket.userId,
+            'inspector_id': ticket.inspectorId,
+            'distributor_admin_id': ticket.distributorAdminId,
+            'department': ticket.department,
+            'created_by': ticket.createdBy,
+            'creator_type': ticket.creatorType,
+            'ticket_type': ticket.ticketType,
+            'cleaning_id': ticket.cleaningId,
+            'status': ticket.status,
+            'createdAt': ticket.createdAt.toString(),
+            'updatedAt': ticket.updatedAt.toString(),
+            'priority': ticket.priority,
+            'assigned_to': ticket.assignedTo,
+            'ip': ticket.ip,
+            'creator_name': ticket.creatorName,
+            'inspector_assigned': ticket.inspectorAssigned,
+            'chat_count': ticket.chatCount,
+            'location': 'Location details',
+            'phone': 'Phone details',
+            'remark': 'Remark details',
+          };
+        }).toList();
 
-      // Apply initial filters if current tab is 'all'
-      if (selectedTicketTab.value == 'all') {
-        applyFilters();
+        if (selectedTicketTab.value == 'all') {
+          applyFilters();
+        }
+      } else {
+        errorMessage.value = response.errorMessage ?? 'Failed to load all tickets';
       }
     } catch (e) {
       errorMessage.value = 'Failed to load all tickets: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        'Failed to load all tickets',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Fetch MY tickets from API (tickets assigned to current user)
   Future<void> fetchMyTickets() async {
     try {
       isLoading.value = true;
       errorMessage.value = null;
 
-      // Replace with your actual API call
-      // Example: final response = await ApiService.getMyTickets(userId);
+      final inspectorId = await ApiService.getUid();
 
-      // Mock API call
-      await Future.delayed(const Duration(seconds: 1));
+      if (inspectorId == null) {
+        throw Exception('No UID found');
+      }
 
-      // Sample mock data for MY tickets (subset of all tickets assigned to current user)
-      final response = [
-        {
-          'id': '4',
-          'title': 'My Network Issue',
-          'description': 'Personal network troubleshooting',
-          'assignedTo': 'Current User', // This would be current user ID/name
-          'priority': 'high',
-          'status': 'open',
-          'remark': 'Working on it',
-          'name': 'Alice',
-          'phone': '+91 9876543212',
-          'opened': '21/2/25 10:00Am',
-          'closed': '',
-          'location': 'DEF-3 Bangalore Karnataka(560001)',
-          'plantName': 'My Plant Name',
-          'autoClean': 'hh:mm',
-          'ownerName': 'Owner Name',
-          'ownerPhone': '+91 8003373561',
-          'assignedBy': 'Manager'
-        },
-        {
-          'id': '5',
-          'title': 'My Software Bug',
-          'description': 'Bug in my assigned module',
-          'assignedTo': 'Current User',
-          'priority': 'low',
-          'status': 'closed',
-          'remark': 'Fixed and deployed',
-          'name': 'Bob',
-          'phone': '+91 9876543213',
-          'opened': '19/2/25 9:00Am',
-          'closed': '20/2/25 5:00Pm',
-          'location': 'GHI-4 Chennai Tamil Nadu(600001)',
-          'plantName': 'My Plant Name',
-          'autoClean': 'hh:mm',
-          'ownerName': 'Owner Name',
-          'ownerPhone': '+91 8003373561',
-          'assignedBy': 'Admin'
-        },
-      ];
+      final response = await ApiService.get<TicketsResponse>(
+        endpoint: "/api/tickets/created-by-inspector/$inspectorId",
+        fromJson: (json) => TicketsResponse.fromJson(json),
+      );
 
-      myTickets.value = response;
+      if (response.success && response.data != null) {
+        myTickets.value = response.data!.tickets.map((ticket) {
+          return {
+            'id': ticket.id.toString(),
+            'title': ticket.title,
+            'description': ticket.description,
+            'plant_id': ticket.plantId,
+            'user_id': ticket.userId,
+            'inspector_id': ticket.inspectorId,
+            'distributor_admin_id': ticket.distributorAdminId,
+            'department': ticket.department,
+            'created_by': ticket.createdBy,
+            'creator_type': ticket.creatorType,
+            'ticket_type': ticket.ticketType,
+            'cleaning_id': ticket.cleaningId,
+            'status': ticket.status,
+            'createdAt': ticket.createdAt.toString(),
+            'updatedAt': ticket.updatedAt.toString(),
+            'priority': ticket.priority,
+            'assigned_to': ticket.assignedTo,
+            'ip': ticket.ip,
+            'creator_name': ticket.creatorName,
+            'inspector_assigned': ticket.inspectorAssigned,
+            'chat_count': ticket.chatCount,
+            'location': 'Location details',
+            'phone': 'Phone details',
+            'remark': 'Remark details',
+          };
+        }).toList();
 
-      // Apply initial filters if current tab is 'my'
-      if (selectedTicketTab.value == 'my') {
-        applyFilters();
+        if (selectedTicketTab.value == 'my') {
+          applyFilters();
+        }
+      } else {
+        errorMessage.value = response.errorMessage ?? 'Failed to load my tickets';
       }
     } catch (e) {
       errorMessage.value = 'Failed to load my tickets: ${e.toString()}';
-      Get.snackbar(
-        'Error',
-        'Failed to load my tickets',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Fetch tickets (legacy method - now calls both)
   Future<void> fetchTickets() async {
     await Future.wait([
       fetchAllTickets(),
@@ -776,7 +822,6 @@ class TicketController extends GetxController {
     ]);
   }
 
-  // Refresh ticket list based on current tab
   Future<void> refreshTickets() async {
     if (selectedTicketTab.value == 'all') {
       await fetchAllTickets();
@@ -785,7 +830,6 @@ class TicketController extends GetxController {
     }
   }
 
-  // Refresh both ticket lists
   Future<void> refreshAllTickets() async {
     await Future.wait([
       fetchAllTickets(),
@@ -793,17 +837,14 @@ class TicketController extends GetxController {
     ]);
   }
 
-  // Get current tickets based on selected tab
   List<Map<String, dynamic>> get currentTickets {
     return selectedTicketTab.value == 'all' ? allTickets : myTickets;
   }
 
-  // Get ticket details from current data source
   Map<String, dynamic>? getTicketDetails(String id) {
     try {
       return currentTickets.firstWhere((ticket) => ticket['id'] == id);
     } catch (e) {
-      // Try searching in both lists
       try {
         return allTickets.firstWhere((ticket) => ticket['id'] == id);
       } catch (e) {
@@ -817,7 +858,6 @@ class TicketController extends GetxController {
     }
   }
 
-  // Navigate to ticket details
   void navigateToTicketDetails(String id) {
     final ticket = getTicketDetails(id);
     if (ticket != null) {
@@ -826,7 +866,6 @@ class TicketController extends GetxController {
     }
   }
 
-  // Call the ticket contact
   void callContact(String phoneNumber) {
     Get.snackbar(
       'Calling',
@@ -835,7 +874,6 @@ class TicketController extends GetxController {
     );
   }
 
-  // Navigate to location
   void navigateToLocation(String location) {
     Get.snackbar(
       'Navigation',
@@ -844,7 +882,6 @@ class TicketController extends GetxController {
     );
   }
 
-  // Send a message in the ticket detail view
   Future<void> sendMessage() async {
     if (messageController.text.trim().isEmpty) {
       Get.snackbar(
@@ -880,7 +917,6 @@ class TicketController extends GetxController {
     }
   }
 
-  // Add a remark to the ticket
   Future<void> addRemark() async {
     if (remarkController.text.trim().isEmpty) {
       Get.snackbar(
@@ -899,7 +935,6 @@ class TicketController extends GetxController {
         final updatedTicket = Map<String, dynamic>.from(currentTicket.value!);
         updatedTicket['remark'] = remarkController.text;
 
-        // Update in both lists if present
         final allIndex = allTickets.indexWhere((t) => t['id'] == updatedTicket['id']);
         if (allIndex != -1) {
           allTickets[allIndex] = updatedTicket;
@@ -911,7 +946,7 @@ class TicketController extends GetxController {
         }
 
         currentTicket.value = updatedTicket;
-        applyFilters(); // Refresh filtered list
+        applyFilters();
 
         Get.snackbar(
           'Success',
@@ -935,7 +970,6 @@ class TicketController extends GetxController {
     }
   }
 
-  // Reopen a closed ticket
   Future<void> reopenTicket() async {
     if (currentTicket.value == null) {
       Get.snackbar(
@@ -963,7 +997,6 @@ class TicketController extends GetxController {
       updatedTicket['status'] = 'open';
       updatedTicket['closed'] = '';
 
-      // Update in both lists if present
       final allIndex = allTickets.indexWhere((t) => t['id'] == updatedTicket['id']);
       if (allIndex != -1) {
         allTickets[allIndex] = updatedTicket;
@@ -975,7 +1008,7 @@ class TicketController extends GetxController {
       }
 
       currentTicket.value = updatedTicket;
-      applyFilters(); // Refresh filtered list
+      applyFilters();
 
       Get.snackbar(
         'Success',
@@ -996,7 +1029,6 @@ class TicketController extends GetxController {
     }
   }
 
-  // Generate ticket image (mock functionality)
   void generateTicketImage() {
     Get.snackbar(
       'Feature',
