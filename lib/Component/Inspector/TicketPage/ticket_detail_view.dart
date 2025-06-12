@@ -19,8 +19,6 @@ class TicketDetailView extends GetView<TicketController> {
     final Map<String, String> dateTime =
         _formatDateTime(ticketData['createdAt']);
 
-
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(

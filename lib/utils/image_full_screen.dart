@@ -1,9 +1,6 @@
-
-// Full screen image viewer
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'dart:io';
 
 class ImageFullScreenView extends StatefulWidget {
   final String imageUrl;
@@ -64,10 +61,12 @@ class _ImageFullScreenViewState extends State<ImageFullScreenView> {
           });
         },
         itemBuilder: (context, index) {
+          final imagePath = widget.allImages[index];
           return InteractiveViewer(
             child: Center(
-              child: Image.network(
-                widget.allImages[index],
+              child: imagePath.startsWith('http://') || imagePath.startsWith('https://')
+                  ? Image.network(
+                imagePath,
                 fit: BoxFit.contain,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
@@ -77,6 +76,29 @@ class _ImageFullScreenViewState extends State<ImageFullScreenView> {
                     ),
                   );
                 },
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: Colors.white,
+                          size: 64,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Failed to load image',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              )
+                  : Image.file(
+                File(imagePath),
+                fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return const Center(
                     child: Column(
