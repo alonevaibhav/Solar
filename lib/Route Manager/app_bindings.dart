@@ -13,6 +13,7 @@ class AppBindings extends Bindings {
   @override
   void dependencies() {
 
+
     // Register all controllers here
     Get.lazyPut<LoginController>(() => LoginController(), fenix: true);
     Get.lazyPut<TodayInspectionsController>(() => TodayInspectionsController(),);

@@ -1,3 +1,31 @@
+class Attachment {
+  final int id;
+  final int ticketId;
+  final String path;
+
+  Attachment({
+    required this.id,
+    required this.ticketId,
+    required this.path,
+  });
+
+  factory Attachment.fromJson(Map<String, dynamic> json) {
+    return Attachment(
+      id: json['id'],
+      ticketId: json['ticket_id'],
+      path: json['path'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'ticket_id': ticketId,
+      'path': path,
+    };
+  }
+}
+
 class Ticket {
   final int id;
   final String title;
@@ -20,6 +48,7 @@ class Ticket {
   final String creatorName;
   final String inspectorAssigned;
   final int? chatCount;
+  final List<Attachment> attachments;
 
   Ticket({
     required this.id,
@@ -43,9 +72,13 @@ class Ticket {
     required this.creatorName,
     required this.inspectorAssigned,
     this.chatCount,
+    required this.attachments,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
+    var attachmentsList = json['attachments'] as List? ?? [];
+    List<Attachment> attachments = attachmentsList.map((i) => Attachment.fromJson(i)).toList();
+
     return Ticket(
       id: json['id'],
       title: json['title'] ?? '',
@@ -68,7 +101,35 @@ class Ticket {
       creatorName: json['creator_name'] ?? '',
       inspectorAssigned: json['inspector_assigned'] ?? '',
       chatCount: json['chat_count'],
+      attachments: attachments,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'plant_id': plantId,
+      'user_id': userId,
+      'inspector_id': inspectorId,
+      'distributor_admin_id': distributorAdminId,
+      'department': department,
+      'created_by': createdBy,
+      'creator_type': creatorType,
+      'ticket_type': ticketType,
+      'cleaning_id': cleaningId,
+      'status': status,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'priority': priority,
+      'assigned_to': assignedTo,
+      'ip': ip,
+      'creator_name': creatorName,
+      'inspector_assigned': inspectorAssigned,
+      'chat_count': chatCount,
+      'attachments': attachments.map((e) => e.toJson()).toList(),
+    };
   }
 }
 
@@ -95,5 +156,16 @@ class TicketsResponse {
       tickets: tickets,
       total: json['data']['total'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'success': success,
+      'data': {
+        'tickets': tickets.map((e) => e.toJson()).toList(),
+        'total': total,
+      },
+    };
   }
 }

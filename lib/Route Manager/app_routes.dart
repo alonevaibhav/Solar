@@ -12,6 +12,7 @@ import '../Component/Inspector/PlantInfo/plant _info.dart';
 import '../Component/Inspector/PlantInfo/plant_details_view.dart';
 import '../Component/Inspector/StartInspection/start_inspection.dart';
 import '../Component/Inspector/TicketPage/CreateTicket/ticket_raising_view.dart';
+import '../Component/Inspector/TicketPage/TicketChat/ticket_chat_view.dart';
 import '../Component/Inspector/TicketPage/ticket_detail_view.dart';
 import '../Component/Inspector/TicketPage/ticket_view.dart';
 import '../Component/Inspector/plant_details_view.dart';
@@ -60,6 +61,9 @@ class AppRoutes {
   static const inspectorPlantInfo = '/inspector/inspectorPlantInfo';
   static const inspectorStartInspection = '/inspector/inspectorStartInspection';
   static const inspectorCreateTicket = '/inspector/inspectorCreateTicket';
+
+  static const  inspectorTicketChat = '/inspectorTicketChat/ticket-chat';
+
 
   // All of your pages
   static final routes = <GetPage>[
@@ -191,6 +195,13 @@ class AppRoutes {
       name: inspectorCreateTicket,
       page: () => TicketRaisingView(),
       binding: AppBindings(),
+    ),
+    GetPage(
+      name: inspectorTicketChat,
+      page: () => TicketChatView(),
+      binding: AppBindings(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
     ),
   ];
 }

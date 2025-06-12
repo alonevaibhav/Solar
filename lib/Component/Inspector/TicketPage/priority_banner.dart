@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class PriorityBanner extends StatelessWidget {
   final String priority;
   final String status;
+  final Color color;
 
   const PriorityBanner({
     Key? key,
     required this.priority,
     required this.status,
+    required this.color,
   }) : super(key: key);
 
   @override
@@ -18,12 +20,12 @@ class PriorityBanner extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 1.h),
       decoration: BoxDecoration(
-        color: priority.toLowerCase() == 'high' ? Colors.red : Colors.amber,
+        color: color,
         borderRadius: BorderRadius.circular(8.r),
       ),
       alignment: Alignment.center,
       child: Text(
-        'Priority ${priority.capitalizeFirst}',
+        'Priority: $priority',
         style: TextStyle(
           color: Colors.white,
           fontSize: 13.sp,
@@ -32,8 +34,4 @@ class PriorityBanner extends StatelessWidget {
       ),
     );
   }
-}
-
-extension StringExtension on String {
-  String get capitalizeFirst => isEmpty ? '' : this[0].toUpperCase() + substring(1);
 }

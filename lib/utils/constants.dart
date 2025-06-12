@@ -33,6 +33,8 @@ String getUpdateInspectorDataEndpoint(int inspectionCardId) => "/api/report/clea
 String getAllTicket(int inspectorId) => "/api/tickets/inspector/$inspectorId";
 
 
+// String putTicketById(int ticketId) => "/api/tickets/update/inspector/$ticketId";
+
 String getMyTicket(int inspectorId) => "/api/tickets/created-by-inspector/$inspectorId";
 
 String raiseTicket = "/api/tickets/create/inspector";
