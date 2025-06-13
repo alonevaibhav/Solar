@@ -61,7 +61,7 @@ class TicketDetailView extends GetView<TicketController> {
                 onPressed: () {
                   Get.toNamed(
                     AppRoutes.inspectorTicketChat,
-                    arguments: ticketData, // Pass the ticketData as arguments
+                    arguments: ticketData,
                   );
                 },
                 style: TextButton.styleFrom(

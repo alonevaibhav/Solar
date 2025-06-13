@@ -32,8 +32,16 @@ String getUpdateInspectorDataEndpoint(int inspectionCardId) => "/api/report/clea
 
 String getAllTicket(int inspectorId) => "/api/tickets/inspector/$inspectorId";
 
+//chat
 
-// String putTicketById(int ticketId) => "/api/tickets/update/inspector/$ticketId";
+String getChatByID(int ticketId) => "/ticketChat/chat/ticket/inspector/$ticketId";
+
+String postChatByIDInspector(int ticketId) => "/ticketChat/chat/inspector";
+
+
+
+
+
 
 String getMyTicket(int inspectorId) => "/api/tickets/created-by-inspector/$inspectorId";
 

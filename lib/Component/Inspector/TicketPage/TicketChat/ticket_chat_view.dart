@@ -13,7 +13,10 @@ class TicketChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> ticketData = Get.arguments;
-    final TicketChatController controller = Get.put(TicketChatController());
+    final String ticketId = ticketData['id'];
+    print('Ticket ID: $ticketId');
+    final TicketChatController controller = Get.put(TicketChatController(initialTicketId: ticketId));
+
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
