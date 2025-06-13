@@ -39,7 +39,8 @@ class PlantInspectionController extends GetxController {
   final isSubmitting = false.obs;
   final isDataLoaded = false.obs; // Track if inspector data is loaded
 
-  final statusOptions = ['pending', 'cleaning', 'done', 'failed'];
+  // final statusOptions = ['pending', 'cleaning', 'done', 'failed', 'success'];
+  final statusOptions = ['done', 'success', 'cleaning', 'pending', 'failed'];
 
   @override
   void onInit() {
@@ -149,7 +150,8 @@ class PlantInspectionController extends GetxController {
           'complete': 0,
           'pending': 0,
           'cleaning': 0,
-          'failed': 0
+          'failed': 0,
+          'success': 0
         },
       };
       dashboardData.value = {
@@ -162,6 +164,7 @@ class PlantInspectionController extends GetxController {
     int pendingCount = 0;
     int cleaningCount = 0;
     int failedCount = 0;
+    int successCount = 0;
 
     for (var item in inspectionItems) {
       String status = item['status']?.toString().toLowerCase() ?? '';
@@ -179,6 +182,9 @@ class PlantInspectionController extends GetxController {
         case 'failed':
           failedCount++;
           break;
+          case 'success':
+            successCount++;
+          break;
       }
     }
 
@@ -189,6 +195,7 @@ class PlantInspectionController extends GetxController {
         'pending': pendingCount,
         'cleaning': cleaningCount,
         'failed': failedCount,
+        'success': successCount,
       },
     };
 

@@ -56,6 +56,8 @@ class _InspectionItemState extends State<InspectionItem> with SingleTickerProvid
       case 'completed':
       case 'done':  // Added this case
         return const Color(0xFF48BB78); // Professional green
+      case 'success':  // Added this case
+        return const Color(0xFF48B7BB); // Professional green
       case 'pending':
         return const Color(0xFF718096); // Professional grey
       case 'cleaning':
@@ -73,6 +75,8 @@ class _InspectionItemState extends State<InspectionItem> with SingleTickerProvid
       case 'completed':
       case 'done':  // Added this case
         return 'Completed';
+      case 'success':  // Added this case
+        return 'Success';
       case 'pending':
         return 'Pending';
       case 'cleaning':
@@ -335,6 +339,7 @@ class _InspectionItemState extends State<InspectionItem> with SingleTickerProvid
                             Icon(
                               Icons.play_circle_filled,
                               size: 20.sp,
+                              color: Colors.white,
                             ),
                             SizedBox(width: 8.w),
                             Text(

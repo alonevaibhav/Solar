@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../API Service/api_service.dart';
-import '../../../Route Manager/app_routes.dart';
-import '../../../utils/constants.dart';
+import '../../API Service/api_service.dart';
+import '../../Route Manager/app_routes.dart';
+import '../../utils/constants.dart';
 
 class CleanupScheduleController extends GetxController {
   // Reactive variables
@@ -21,10 +21,8 @@ class CleanupScheduleController extends GetxController {
   final selectedTaskData = Rxn<Map<String, dynamic>>();
 
   // Task status tracking (separate from API data)
-  final taskStatuses =
-      <int, String>{}.obs; // task_id -> status (pending/ongoing/completed)
-  final taskETAs =
-      <int, int>{}.obs; // task_id -> remaining minutes from duration
+  final taskStatuses = <int, String>{}.obs; // task_id -> status (pending/ongoing/completed)
+  final taskETAs = <int, int>{}.obs; // task_id -> remaining minutes from duration
 
   // Search controller
   final searchController = TextEditingController();

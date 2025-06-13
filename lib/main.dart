@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // <-- Required for setting system UI overlay
 import 'package:get/get.dart';
@@ -20,7 +18,8 @@ void main() async {
   String initialRoute = AppRoutes.login;
 
   try {
-    final hasValidToken = await TokenManager.hasToken() && !await TokenManager.isTokenExpired();
+    final hasValidToken =
+        await TokenManager.hasToken() && !await TokenManager.isTokenExpired();
 
     if (hasValidToken) {
       final role = await TokenManager.getUserRole();

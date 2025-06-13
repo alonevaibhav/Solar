@@ -131,11 +131,11 @@ class InspectorBottomNavigation extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildNavItem(
-            icon: Icons.description,
-            index: 0,
-            label: 'Reports',
-          ),
+          // _buildNavItem(
+          //   icon: Icons.description,
+          //   index: 0,
+          //   label: 'Reports',
+          // ),
           _buildNavItem(
             icon: Icons.assignment,
             index: 1,

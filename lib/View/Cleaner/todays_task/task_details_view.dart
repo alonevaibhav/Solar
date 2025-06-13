@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'cleanup_schedule_controller.dart';
+import '../../../Controller/Cleaner/cleanup_schedule_controller.dart';
 
 class TaskDetailsView extends StatelessWidget {
   const TaskDetailsView({Key? key}) : super(key: key);

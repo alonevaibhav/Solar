@@ -12,6 +12,9 @@ class TicketController extends GetxController {
   final myTickets = <Map<String, dynamic>>[].obs;
   final filteredTickets = <Map<String, dynamic>>[].obs;
 
+  final allTicketsStats = Rxn<Map<String, dynamic>>();
+
+
   var selectedTicketTab = 'all'.obs;
 
   final searchQuery = ''.obs;
@@ -81,6 +84,53 @@ class TicketController extends GetxController {
     showFilters.value = !showFilters.value;
   }
 
+  void calculateAllTicketsStats() {
+    try {
+      // Calculate counts by priority from all tickets
+      int criticalCount = allTickets.where((t) => t['priority'] == '1').length;
+      int highCount = allTickets.where((t) => t['priority'] == '2').length;
+      int mediumCount = allTickets.where((t) => t['priority'] == '3').length;
+      int lowCount = allTickets.where((t) => t['priority'] == '4').length;
+      int veryLowCount = allTickets.where((t) => t['priority'] == '5').length;
+
+      // Calculate counts by status
+      int openCount = allTickets.where((t) => t['status'] == 'open').length;
+      int closedCount = allTickets.where((t) => t['status'] == 'closed').length;
+
+      allTicketsStats.value = {
+        'count': allTickets.length,
+        'priority': {
+          'critical': criticalCount,
+          'high': highCount,
+          'medium': mediumCount,
+          'low': lowCount,
+          'veryLow': veryLowCount,
+        },
+        'status': {
+          'open': openCount,
+          'closed': closedCount,
+        }
+      };
+    } catch (e) {
+      print('Error calculating all tickets stats: $e');
+      allTicketsStats.value = {
+        'count': 0,
+        'priority': {
+          'critical': 0,
+          'high': 0,
+          'medium': 0,
+          'low': 0,
+          'veryLow': 0,
+        },
+        'status': {
+          'open': 0,
+          'closed': 0,
+        }
+      };
+    }
+  }
+
+
   void applyFilters() {
     List<Map<String, dynamic>> currentTickets =
         selectedTicketTab.value == 'all' ? allTickets : myTickets;
@@ -137,6 +187,7 @@ class TicketController extends GetxController {
     filteredTickets.value = result;
   }
 
+  // Update your existing fetchAllTickets method to call calculateTodaysTickets
   Future<void> fetchAllTickets() async {
     try {
       isLoading.value = true;
@@ -180,6 +231,9 @@ class TicketController extends GetxController {
             'attachments': ticket.attachments,
           };
         }).toList();
+
+        // Calculate all tickets stats after fetching all tickets
+        calculateAllTicketsStats();
 
         if (selectedTicketTab.value == 'all') {
           applyFilters();
